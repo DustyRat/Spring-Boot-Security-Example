@@ -1,0 +1,39 @@
+<div class="checkbox-select">
+	<div class="panel-heading">
+		<span class="form-label pull-left">{{label}}</span>
+		<span class="form-label pull-right"><a ng-click="selectAll()">Select All</a> / <a ng-click="selectNone()">Deselect All</a></span>
+	</div>
+	<div class="panel-body" ng-if="!groupValues">
+		<div class="col-md-4">
+			<div class="row" ng-repeat="item in selectionDisplay | orderBy: 'displayName' | startFrom:(0)*itemsPerColmun | limitTo:itemsPerColmun track by $index"
+				ng-click="pushPull(item.id)">
+				<span class="col-xs-2">
+					<i class="{{checked(item.data) ? 'fa fa-check-square-o': 'fa fa-square-o'}}"></i>
+				</span>
+				<span class="col-xs-10">{{item.displayName}}</span>
+			</div>
+		</div>
+		<div class="col-md-4">
+			<div class="row" ng-repeat="item in selectionDisplay | orderBy: 'displayName' | startFrom:(1)*itemsPerColmun | limitTo:itemsPerColmun track by $index"
+				ng-click="pushPull(item.id)">
+				<span class="col-xs-2">
+					<i class="{{checked(item.data) ? 'fa fa-check-square-o': 'fa fa-square-o'}}"></i>
+				</span>
+				<span class="col-xs-10">{{item.displayName}}</span>
+			</div>
+		</div>
+		<div class="col-md-4">
+			<div class="row" ng-repeat="item in selectionDisplay | orderBy: 'displayName' | startFrom:(2)*itemsPerColmun | limitTo:itemsPerColmun track by $index"
+				ng-click="pushPull(item.id)">
+				<span class="col-xs-2">
+					<i class="{{checked(item.data) ? 'fa fa-check-square-o': 'fa fa-square-o'}}"></i>
+				</span>
+				<span class="col-xs-10">{{item.displayName}}</span>
+			</div>
+		</div>
+	</div>
+	<div class="panel-footer" ng-if="save || cancel">
+		<button ng-if="save" class="btn btn-primary" ng-click="save()"><i class="fa fa-floppy-o fa-lg" aria-hidden="true"></i> Save</button>
+		<a ng-if="cancel" class="text-danger" ng-click="cancel()"> Cancel</a>
+	</div>
+</div>

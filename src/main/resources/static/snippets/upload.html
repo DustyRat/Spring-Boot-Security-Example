@@ -1,0 +1,59 @@
+<div class="upload">
+	<div class="panel-body" ng-hide="uploader.queue.length > 0">
+		<label class="btn btn-default">
+			Choose File <input type="file" ng-file-select="" uploader="uploader" accept="{{accept}}" style="display: none;">
+		</label>
+		<br>
+		<div class="well drop-zone" style="margin-bottom: auto;" ng-file-drop="" ng-file-over="" uploader="uploader" ng-show="uploader.isHTML5">
+			<span><i class="fa fa-file-o" aria-hidden="true"></i> Drag and Drop</span>
+		</div>
+	</div>
+	<table class="table" ng-show="uploader.queue.length > 0">
+		<thead>
+			<tr>
+				<th width="1px"></th>
+				<th width="50%"></th>
+				<th ng-show="uploader.isHTML5">Size</th>
+				<th ng-show="uploader.isHTML5">Progress</th>
+				<th>Status</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody ng-repeat="item in uploader.queue">
+			<tr>
+				<td>
+					<i class="fa fa-angle-up" aria-hidden="true" style="cursor: pointer;" ng-show="$index > 0" ng-click="moveUp($index)"></i><br>
+					<i class="fa fa-angle-down" aria-hidden="true" style="cursor: pointer;" ng-show="!$last" ng-click="moveDown($index)"></i>
+				</td>
+				<td id="{{item.file.name}}">
+					<strong>{{item.file.name}}</strong>
+				</td>
+				<td ng-show="uploader.isHTML5" nowrap>{{item.file.size  |fileSize}}</td>
+				<td ng-show="uploader.isHTML5">
+					<div class="progress" style="margin-bottom: 0;">
+						<div class="progress-bar" role="progressbar" ng-style="{'width': item.progress + '%'}"></div>
+					</div>
+				</td>
+				<td class="text-center">
+					<span ng-show="item.isSuccess" class="text-success"><i class="fa fa-check" aria-hidden="true"></i></span>
+					<span ng-show="item.isCancel" class="text-warning"><i class="fa fa-ban" aria-hidden="true"></i></span>
+					<span ng-show="item.isError" class="text-danger"><i class="fa fa-times" aria-hidden="true"></i></span>
+				</td>
+				<td nowrap>
+					<button type="button" class="btn btn-primary btn-xs" ng-click="item.upload()" ng-disabled="item.isReady || item.isUploading || item.isSuccess">
+						<i class="fa fa-upload" aria-hidden="true"></i> Upload
+					</button>
+					<button type="button" class="btn btn-warning btn-xs" ng-click="item.cancel()" ng-disabled="!item.isUploading">
+						<i class="fa fa-ban" aria-hidden="true"></i> Cancel
+					</button>
+					<button type="button" class="btn btn-danger btn-xs" ng-click="item.remove()">
+						<i class="fa fa-trash" aria-hidden="true"></i> Remove
+					</button>
+				</td>
+			</tr>
+			<tr ng-show="item.isError">
+				<td colspan="7" class="text-warning text-wrap">{{item._xhr.responseText}}</td>
+			</tr>
+		</tbody>
+	</table>
+</div>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="">
+		<meta name="author" content="HarrisLOGIC, Inc.">
+		<link rel="shortcut icon" href="${createLink(uri: '/assets/favicon.ico')}" type="image/x-icon" />
+		<title>Login</title>
+
+		<link rel="stylesheet" type="text/css" href="/css/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="/css/font-awesome/css/font-awesome.min.css">
+		<link rel="stylesheet" type="text/css" href="/css/animate.css">
+		<link rel="stylesheet" type="text/css" href="/css/metisMenu.min.css">
+		<link rel="stylesheet" type="text/css" href="/css/metis-canvas.min.css">
+
+		<link rel="stylesheet" type="text/css" href="/css/Source_Sans_Pro/source-sans-pro.css">
+
+		<link rel="stylesheet" type="text/css" href="/css/normalize.css">
+		<link rel="stylesheet" type="text/css" href="/css/jquery/css/jqvmap.min.css">
+		<link rel="stylesheet" type="text/css" href="/css/dragula.min.css">
+		<link rel="stylesheet" type="text/css" href="/css/perfect-scrollbar.min.css">
+		<link rel="stylesheet" type="text/css" href="/css/chl.css">
+		<link rel="stylesheet" type="text/css" href="/css/pace/css/pace-theme-minimal.css">
+		<link rel="stylesheet" type="text/css" href="/css/main.css" />
+
+		<script type="text/javascript" src="/js/jquery/js/jquery-2.2.4.min.js"></script>
+		<script type="text/javascript" src="/js/bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="/js/moment/moment.min.js"></script>
+		<script type="text/javascript" src="/js/metisMenu.min.js"></script>
+		<script type="text/javascript" src="/js/metis-canvas.min.js"></script>
+
+		<script type="text/javascript" src="/js/underscore-min.js"></script>
+		<script type="text/javascript" src="/js/angular/angular.min.js"></script>
+		<script type="text/javascript" src="/js/angular/angular-route.min.js"></script>
+		<script type="text/javascript" src="/js/bootbox.min.js"></script>
+		<script type="text/javascript" src="/js/pace/js/pace.min.js"></script>
+		<script>
+			$(document).ready(function(){
+				$('form').bind('submit', function (){
+					$('#submit').prop('disabled', true);
+				});
+			});
+		</script>
+	</head>
+	<body layout:fragment="content">
+		<div class="app">
+			<div class="app-wrap">
+				<header class="app-heading" style="z-index: 500;">
+					<!-- APP HEADING -->
+					<nav class="navbar navbar-default navbar-fixed-top shadow-2dp">
+						<div class="navbar-header">
+							<div class="navbar-header-left p-l-15">
+								<a class="logo" href="${createLink(uri: '/')}">
+									<span class="logo-lg"><img src="${createLink(uri: '/assets/HLI_logo_white.png')}" alt="Harris Logic Inc."></span>
+								</a>
+							</div>
+						</div>
+					</nav>
+				</header>
+				<div class="app-container">
+					<div class="app-login" style="top: 250px;">
+						<div class="text-center box shadow-5 b-r-4 p-a-20">
+							<!--<h1 class="f-4 m-a-0">Sign In</h1>-->
+							<h4>Please Sign In</h4>
+							<g:form class="text-left" autocomplete="off" action="signIn" method="POST" useToken="true">
+								<g:hiddenField name="rememberMe" value="${flash.rememberMe}"/>
+								<div class="form-group has-feedback">
+									<input class="form-control" placeholder="Username" type="text" name="username" autofocus>
+									<span class="form-control-feedback"><i class="fa fa-fw fa-user"></i></span>
+								</div>
+								<!--
+								<p class="text-center">- or -</p>
+								<div class="form-group has-feedback">
+									<input class="form-control" placeholder="Email" type="email" name="email">
+									<span class="form-control-feedback">
+									  <i class="fa fa-fw fa-envelope"></i>
+									</span>
+								</div>
+								-->
+								<div class="form-group has-feedback">
+									<input class="form-control" placeholder="Password" autocomplete="off" type="password" name="password">
+									<span class="form-control-feedback"><i class="fa fa-fw fa-key"></i></span>
+								</div>
+								<button type="submit" class="btn btn-primary btn-block m-b-15">Login</button>
+								<!--
+								<a href="app-forgot.html"><small>Forgot password?</small></a>
+								<p class="text-muted text-center">Do not have an account?<a href="app-register.html">Create an account</a></p>
+								-->
+								<div class="login-error">
+									<g:if test="${flash.message}">${flash.message}</g:if>
+								</div>
+							</g:form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<span class="fa fa-angle-up" id="totop" data-plugin="totop"></span>
+		<script type="text/javascript" src="/js/perfect-scrollbar.jquery.js"></script>
+		<script type="text/javascript" src="/js/dragula.min.js"></script>
+		<script type="text/javascript" src="/js/moment/moment-with-locales.min.js"></script>
+		<script type="text/javascript" src="/js/chl.js"></script>
+		<script type="text/javascript" src="/js/application.js"></script>
+	</body>
+</html>

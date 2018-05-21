@@ -1,0 +1,35 @@
+@import (reference) 'bootstrap\bootstrap.less';
+@import 'variables';
+@import 'mixins';
+
+.dual-list-box {
+	button {
+		width: 50%;
+		display: inline-block;
+		border-bottom-right-radius: 0;
+		border-bottom-left-radius: 0;
+	}
+	
+	label {
+		width: 100%;
+		text-align: center;
+	}
+	
+	& > div > button:first-of-type {
+		float: left;
+		border-top-right-radius: 0;
+	}
+	
+	& > div > button:last-of-type {
+		float: right;
+		border-top-left-radius: 0;
+	}
+	
+	select {
+		overflow: auto;
+		border-top-left-radius: 0;
+		border-top-right-radius: 0;
+		height: 200px;
+		border-color: @hli-dark-green;
+	}
+}

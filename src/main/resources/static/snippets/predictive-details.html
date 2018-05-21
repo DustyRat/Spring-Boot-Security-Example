@@ -1,0 +1,55 @@
+<div>
+	<table class="table table-bordered table-condensed table-striped">
+		<tr class="info">
+			<td width="200">&nbsp;</td>
+			<td width="164">Prior Events</td>
+			<td>Likelihood</td>
+		</tr>
+	
+		<tr>
+			<td>Recidivism:</td>
+			<td><span ng-class="{'color-blue': predDetails.recIdentified == 'True'}">{{predDetails.recIdentified}}</span></td>
+			<td><span ng-class="{'color-red': predDetails.recLikelihood > 50.00}">{{predDetails.recLikelihood}}%</span></td>
+		</tr>
+	</table>	
+	
+	<table class="table table-bordered table-condensed table-striped">
+		<tr class="info">
+			<td width="200">&nbsp;</td>
+			<td width="164">Pre-Identified</td>
+			<td>Likelihood</td>
+		</tr>
+		<tr>
+			<td>High Utilization:</td>  
+			<td><span ng-class="{'color-blue': predDetails.highUtilIdentified == 'True'}">{{predDetails.highUtilIdentified}}</span></td>
+			<td><span ng-class="{'color-red': predDetails.highUtilLikelihood > 50.00}">{{predDetails.highUtilLikelihood}}%</span></td>
+		</tr>
+	</table>	
+	
+	<table class="table table-bordered table-condensed table-striped">
+		<tr class="info">
+			<td width="260">Contributing Factors</td>
+			<td>Counts</td>
+		</tr>
+		<tr>
+			<td>Program Forensics:</td>
+			<td>{{predDetails.recProgramForensicCount}}</td>
+		</tr>
+		<tr>
+			<td>High Level of Care:</td>
+			<td>{{predDetails.recProviderHlocCount}}</td>
+		</tr>
+		<tr>
+			<td>Trespass Charges:</td>
+			<td>{{predDetails.recTrespassChargesCount}}</td>
+		</tr>
+		<tr>
+			<td>Non-Compliance Charges:</td>
+			<td>{{predDetails.recNoncomplianceChargesCount}}</td>
+		</tr>
+		<tr>
+			<td>Non-Mood Psychotic:</td>
+			<td>{{predDetails.recDxNonMoodPsychoticCount}}</td>
+		</tr>
+	</table>
+</div>

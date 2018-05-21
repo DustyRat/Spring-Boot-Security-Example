@@ -1,0 +1,54 @@
+@import (reference) 'bootstrap\bootstrap.less';
+@import 'variables';
+@import 'mixins';
+
+.upload {
+	border: 1px solid #b6b6b7;
+	box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.15);
+	width: 100%;
+	overflow: auto;
+	
+	& > .table {
+		margin-bottom: 0;
+		& > thead > tr > th {
+			white-space: nowrap;
+			border-bottom: 0;
+		}
+		& > tbody > tr > td,
+		& > tbody > tr > th, 
+		& > tfoot > tr > th, 
+		& > thead > tr > td, 
+		& > tfoot > tr > td {
+			white-space: nowrap;
+			vertical-align: middle;
+		}
+	}
+	.drop-zone {
+		border: dotted 3px lightgray;
+		width: 200px;
+		display: inline-block;
+		text-align: center;
+		
+		& > span {
+			display: table-cell;
+			vertical-align: middle;
+		}
+	}
+	.nv-file-over {
+		border: dotted 3px red;
+	}
+}
+
+.progress-bar {
+	.progress-bar;
+    background-color: @hli-dark-green;
+}
+
+.imageSelect {
+	padding: 4px;
+	margin: auto;
+	max-height: 220px;
+	border: 1px solid #b6b6b7;
+	box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.15);
+	overflow: auto;
+}

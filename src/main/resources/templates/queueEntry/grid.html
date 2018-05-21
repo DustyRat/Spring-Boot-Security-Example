@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="layout" content="main">
+		<script type="text/javascript" src="/js/main/SortControls.js"></script>
+		<script type="text/javascript" src="/js/main/controllers/QueueEntryController.js"></script>
+	</head>
+
+	<body layout:fragment="content">
+		<script>
+			$('#bookin-menu').addClass("active");
+			$('#bookin-grid-link').addClass("active");
+		</script>
+		<div ng-controller="SortCtrl" ng-init="defaultSort='name';rememberSort=true;itemsPerPage=25">
+			<header class="main-heading">
+				<div class="panel panel-filter">
+					<div class="panel-heading">
+						<div class="panel-title">
+							<a ng-collapse="#facets:false">
+								<i class="{{display ? 'fa fa-angle-down' : 'fa fa-angle-right'}}" aria-hidden="true"></i> Filters
+							</a>
+							<div class="filter-display">
+								<span ng-show="options[$id].filters.$">"{{options[$id].filters.$}}" - </span><span ng-repeat="(key, item) in options[$id].filters"><span ng-repeat="i in item">{{i == '' ? 'NA' : i}}{{$last ? '' : ' / '}}</span>{{$last ? '' : ' / '}}</span>
+							</div>
+							<a class="filter-reset pull-right" ng-click="reset()">Reset</a>
+						</div>
+					</div>
+					<div id="facets" class="panel-body">
+						<form class="filter-bar">
+							<i class="filter-icon fa fa-filter" aria-hidden="true"></i>
+							<input type="text" class="filter-search" placeholder="Filter" ng-model="options[$id].filters.$" ng-model-options="{updateOn: 'default blur', debounce: {'default': 700, 'blur': 0}}">
+						</form>
+						<div class="row">
+							<facet class="col-md-4" label="'Status'" key="'status'" size="'145px'"></facet>
+							<facet class="col-md-4" label="'Current Activities'" key="'activities'" size="'145px'"></facet>
+							<facet class="col-md-4" label="'Charge'" key="'charges'" size="'145px'"></facet>
+						</div>
+						<div class="row">
+							<facet class="col-md-4" label="'Felony Found'" key="'hasFelony'" size="'70px'"></facet>
+							<facet class="col-md-4" label="'Released Status'" key="'released'" size="'70px'"></facet>
+							<facet class="col-md-4" label="'Source'" key="'source'" size="'70px'"></facet>
+						</div>
+						<div class="row">
+							<facet class="col-md-4" label="'TLETS'" key="'tlets'" size="'70px'"></facet>
+							<facet class="col-md-4" label="'Mental Health'" key="'mentalHealthPatient'" size="'70px'"></facet>
+							<facet class="col-md-4" label="'PAP'" key="'pap'" size="'70px'"></facet>
+						</div>
+					</div>
+				</div>
+			</header>
+			<div class="main-content" ng-controller="QueueEntryListCtrl">
+				<div class="container-fluid p-t-50">
+					<div class="row" ng-if="navCtrl.isPermittedAny(['actionbookinsearch', 'actionprint', 'actionmasschangestatus', 'actionmasstartactivity'])">
+						<div class="col-md-8" ng-if="navCtrl.isPermittedAny(['actionprint', 'actionmasschangestatus', 'actionmasstartactivity'])">
+							<div class="form-inline" style="margin-bottom: 15px;">
+								<div class="dropdown form-group">
+									<button class="btn dropdown-toggle form-control" data-toggle="dropdown">{{action ? action : 'Mass Action'}}<i class="fa fa-caret-down"></i></button>
+									<ul class="dropdown-menu">
+										<li>
+											<a style="cursor: pointer;" ng-click="setAction(); cancel();"><hr style="margin: 10px; border-color: black;"></a>
+										</li>
+										<li ng-if="navCtrl.isPermitted('actionprint')">
+											<a style="cursor: pointer;" ng-click="setAction('Print'); reset();">
+												<i class="{{action != 'Print' ? 'fa fa-circle-thin fa-fw': 'fa fa-circle fa-fw'}}"></i> Print
+											</a>
+										</li>
+										<li ng-if="navCtrl.isPermitted('actionmasstartactivity')">
+											<a style="cursor: pointer;" ng-click="setAction('Start Activity'); reset();">
+												<i class="{{action != 'Start Activity' ? 'fa fa-circle-thin fa-fw': 'fa fa-circle fa-fw'}}"></i> Start Activity
+											</a>
+										</li>
+										<li ng-if="navCtrl.isPermitted('actionmasschangestatus')">
+											<a style="cursor: pointer;" ng-click="setAction('Status Change'); reset();">
+												<i class="{{action != 'Status Change' ? 'fa fa-circle-thin fa-fw': 'fa fa-circle fa-fw'}}"></i> Status Change
+											</a>
+										</li>
+									</ul>
+								</div>
+								<div class="dropdown form-group" ng-show="action == 'Start Activity'">
+									<button class="btn dropdown-toggle form-control" data-toggle="dropdown">{{status ? status.name : 'Select Status'}}<i class="fa fa-caret-down"></i></button>
+									<ul class="dropdown-menu">
+										<li>
+											<a style="cursor: pointer;" ng-click="setStatus(); reset(); clearActivitySelection();"><hr style="margin: 10px; border-color: black;"></a>
+										</li>
+										<li ng-repeat="stat in selectStatuses track by $index">
+											<a style="cursor: pointer;" ng-if="stat.activities.length > 0" ng-click="setStatus(stat); reset(); clearActivitySelection();">
+												<i class="{{status.name != stat.name ? 'fa fa-circle-thin fa-fw': 'fa fa-circle fa-fw'}}"></i>{{stat.name}}
+											</a>
+										</li>
+									</ul>
+								</div>
+								<div class="dropdown form-group" ng-show="action == 'Start Activity' && status">
+									<button class="btn dropdown-toggle form-control" data-toggle="dropdown">Select Activities<i class="fa fa-caret-down"></i></button>
+									<ul class="dropdown-menu">
+										<li ng-repeat="activity in status.activities track by $index">
+											<a style="cursor: pointer;" ng-click="$event.stopPropagation(); toggleActivity(activity.id);" data-toggle="tooltip" data-placement="right" data-value="{{activity.description}}">
+												<i class="{{activities.indexOf(activity.id) > -1 ? 'fa fa-check-square-o fa-fw': 'fa fa-square-o fa-fw'}}"></i>{{activity.name}}
+											</a>
+										</li>
+									</ul>
+								</div>
+								<div class="dropdown form-group" ng-show="action == 'Status Change'">
+									<button class="btn dropdown-toggle form-control" data-toggle="dropdown">{{fromStatus ? fromStatus.name : 'From Status'}}<i class="fa fa-caret-down"></i></button>
+									<ul class="dropdown-menu">
+										<li>
+											<a style="cursor: pointer;" ng-click="setFrom(); reset(); clearStatusSelection();"><hr style="margin: 10px; border-color: black;"></a>
+										</li>
+										<li ng-repeat="status in selectStatuses track by $index">
+											<a style="cursor: pointer;" ng-click="setFrom(status); reset(); clearStatusSelection();">
+												<i class="{{fromStatus.name != status.name ? 'fa fa-circle-thin fa-fw': 'fa fa-circle fa-fw'}}"></i>{{status.name}}
+											</a>
+										</li>
+									</ul>
+								</div>
+								<div class="dropdown form-group" ng-show="action == 'Status Change'">
+									<button class="btn dropdown-toggle form-control" data-toggle="dropdown">{{toStatus ? toStatus.name : 'To Status'}}<i class="fa fa-caret-down"></i></button>
+									<ul class="dropdown-menu">
+										<li>
+											<a style="cursor: pointer;" ng-click="setTo()"><hr style="margin: 10px; border-color: black;"></a>
+										</li>
+										<li ng-repeat="status in statuses | filter:{'isEnabled': true} track by $index">
+											<a style="cursor: pointer;" ng-show="fromStatus.name != status.name" ng-click="setTo(status)">
+												<i class="{{toStatus.name != status.name ? 'fa fa-circle-thin fa-fw': 'fa fa-circle fa-fw'}}"></i> {{status.name}}
+											</a>
+										</li>
+									</ul>
+								</div>
+							</div>
+							<div class="form-inline" style="margin-bottom: 15px;" ng-show="action">
+								<div class="form-group">
+									<button class="btn" ng-click="checkAll(data)">Check All</button>
+									<button class="btn" ng-click="uncheckAll()">Uncheck All</button>
+								</div>
+								<div class="form-group" ng-show="action == 'Print'">
+									<button class="btn btn-primary" ng-click="print()" ng-disabled="!(selectedEntries.print.length > 0)"><i class="fa fa-print" aria-hidden="true"></i> Print Preview</button>	
+									<button class="btn btn-danger" ng-click="cancel()">Cancel</button>
+								</div>
+								<div class="form-group" ng-show="action == 'Start Activity'">
+									<button class="btn btn-primary" ng-click="startActivity()" ng-disabled="!status || !(selectedEntries.activity.length > 0) || !(activities.length > 0)">Apply</button>
+									<button class="btn btn-danger" ng-click="cancel()">Cancel</button>
+								</div>
+								<div class="form-group" ng-show="action == 'Status Change'">
+									<button class="btn btn-primary" ng-click="changeStatus()" ng-disabled="!(selectedEntries.status.length > 0)">Apply</button>
+									<button class="btn btn-danger" ng-click="cancel()">Cancel</button>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-4" ng-if="navCtrl.isPermitted('actionbookinsearch')">
+							<form class="form-group">
+								<div class="input-group">
+									<input type="text" class="form-control" placeholder="Bookin Number" ng-model="searchParams.bookin">
+									<span class="input-group-btn">
+										<button type="button" class="btn btn-primary" style="padding-top: 5px; padding-bottom: 5px; padding-left: 10px;" ng-click="findQueueEntry()">Go</button>
+									</span>
+								</div>
+							</form>
+						</div>
+					</div>
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							<div class="panel-title">
+								<span ng-if="end > 0">Displaying {{begin + 1}} - {{end}} from {{totalItems}} of {{total}}</span>
+								<span ng-if="end == 0">No Results</span>
+								<div class="pull-right">
+		<%--							<button type="button" class="btn" ng-click="loadPrev()" ng-style="{'visibility': offset > 0 ? 'visible' : 'hidden'}"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>--%>
+									<button type="button" class="btn" ng-click="refresh()"><i class="fa fa-refresh" aria-hidden="true"></i></button>
+		<%--							<button type="button" class="btn" ng-click="loadNext()" ng-style="{'visibility': total > data.length ? 'visible' : 'hidden'}"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>--%>
+								</div>
+							</div>
+						</div>
+						<div class="panel-body" style="text-align: center;" ng-hide="data.length > 0">
+							<span class="text-danger">No Results</span>
+						</div>
+						<div class="panel-table-body">
+							<table class="table table-body-striped table-body-hover" ng-show="data.length > 0">
+								<thead>
+									<tr>
+										<th></th>
+										<th ng-show="action" style="width: 35px">{{action}}</th>
+										<th class="sortRow" ng-click="changeSort('name')"><i class="{{sorted('name') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Name</th>
+										<th class="sortRow" ng-click="changeSort('status')"><i class="{{sorted('status') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Status</th>
+										<th class="sortRow" ng-click="changeSort('hasFelony')"><i class="{{sorted('hasFelony') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Felony</th>
+										<th class="sortRow" ng-click="changeSort('hasParoleViolation')"><i class="{{sorted('hasParoleViolation') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>P&nbsp;&&nbsp;P</th>
+										<th class="sortRow" ng-click="changeSort('date')"><i class="{{sorted('date') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Bookin DateTime</th>
+										<th class="sortRow" ng-click="changeSort('statusUpdated')"><i class="{{sorted('statusUpdated') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Last Status Change</th>
+									</tr>
+								</thead>
+								<tbody ng-repeat="queueEntry in data | orderBy:sortType:sortReverse | startFrom:(currentPage-1)*itemsPerPage | limitTo:itemsPerPage track by queueEntry.id" ng-click="check(queueEntry)" ng-controller="ToggleCtrl as toggle">
+									<tr>
+										<td rowspan="2" class="expand" style="{{queueEntry.activities.length > 0 ? '' : 'cursor: default;'}}"ng-click="$event.stopPropagation(); queueEntry.activities.length > 0 && toggle.setToggle()">
+											<i class="{{toggle.show ? 'fa fa-angle-down' : 'fa fa-angle-right'}}" aria-hidden="true" ng-if="queueEntry.activities.length > 0"></i>
+										</td>
+										<td ng-show="action">
+											<a style="cursor: pointer; color: grey;"><i class="{{isSelected(queueEntry) ? 'fa fa-check-square-o': 'fa fa-square-o'}}"></i></a>
+										</td>
+										<td ng-click="$event.stopPropagation();"><a class="show-link" href="${createLink(uri: '/show/')}{{queueEntry.id}}">{{queueEntry.name | capitalize}}</a></td>
+										<td>{{queueEntry.status}}</td>
+										<td width="5%">{{queueEntry.hasFelony | capitalize}}</td>
+										<td width="5%">{{queueEntry.hasParoleViolation | capitalize}}</td>
+										<td>{{queueEntry.date | date: 'MM/dd/yyyy h:mma'}}</td>
+										<td>{{queueEntry.statusUpdated | date : "MM/dd/yyyy h:mma"}}</td>
+									</tr>
+									<tr ng-show="toggle.show">
+										<th colspan="{{action ? 2 : 1}}">Current Activities</th>
+										<td colspan="5"><span ng-repeat="activity in queueEntry.activities">{{activity}}{{$last ? '' : ', '}}</span></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="text-center">
+							<uib-pagination
+								ng-hide="hide"
+								class="pagination-sm"
+								boundary-links="true"
+								boundary-link-numbers="false"
+								direction-links="true"
+								force-ellipses="false"
+								items-per-page="itemsPerPage"
+								max-size="5"
+								ng-disabled="false"
+								ng-model="currentPage"
+								rotate="true"
+								total-items="totalItems"
+								first-text="&laquo;"
+								previous-text="&lsaquo;"
+								next-text="&rsaquo;"
+								last-text="&raquo;"></uib-pagination>
+						</div>
+					</div>
+					<shiro:lacksPermission permission="actionprint">
+						<div style="display: none;" ng-if="action == 'Print'" ng-init="cancel();"></div>
+					</shiro:lacksPermission>
+					<shiro:lacksPermission permission="actionmasschangestatus">
+						<div style="display: none;" ng-if="action == 'Start Activity'" ng-init="cancel();"></div>
+					</shiro:lacksPermission>
+					<shiro:lacksPermission permission="actionmasstartactivity">
+						<div style="display: none;" ng-if="action == 'Status Change'" ng-init="cancel();"></div>
+					</shiro:lacksPermission>
+					<div class="panel panel-success action-select-list">
+						<div class="panel-heading" ng-show="action == 'Print' && selectedEntries.print.length > 0">
+							<div class="panel-title">
+								<a href="#print" data-toggle="collapse" ng-controller="ToggleCtrl as toggle" ng-click="toggle.setToggle()">
+									<i class="fa {{!toggle.show ? 'fa-angle-right' : 'fa-angle-down'}}" aria-hidden="true"></i> Print
+								</a>
+							</div>
+							<div class="pull-right">
+								{{selectedEntries.print.length}} Selected <button class="btn btn-xs btn-danger btn-clear" ng-click="clearPrintSelection()">Clear</button>
+							</div>
+						</div>
+						<div id="print" class="collapse" ng-show="action == 'Print' && selectedEntries.print.length > 0">
+							<table class="table table-striped">
+								<thead>
+									<tr>
+										<th style="width: 150px;">Name</th>
+										<th style="flex: 1; display: inline-block;">Status</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="queueEntry in selectedEntries.print | orderBy: 'name' track by $index">
+										<td style="width: 150px;"><a class="show-link" href="${createLink(uri: '/show/')}{{queueEntry.id}}">{{queueEntry.name | capitalize}}</a></td>
+										<td style="flex: 1; display: inline-block;">{{queueEntry.status}}</td>
+										<td><a class="text-danger pull-right" style="cursor: pointer;" ng-click="removeFrom(selectedEntries.print, queueEntry)"><i class="fa fa-times fa-fw" aria-hidden="true"></i></a></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="panel-heading" ng-show="action == 'Start Activity' && selectedEntries.activity.length > 0">
+							<div class="panel-title">
+								<a href="#startActivity" data-toggle="collapse" ng-controller="ToggleCtrl as toggle" ng-click="toggle.setToggle()">
+									<i class="fa {{!toggle.show ? 'fa-angle-right' : 'fa-angle-down'}}" aria-hidden="true"></i> Start Activity
+								</a>
+							</div>
+							<div class="pull-right">
+								{{selectedEntries.activity.length}} Selected <button class="btn btn-xs btn-danger btn-clear" ng-click="clearActivitySelection()">Clear</button>
+							</div>
+						</div>
+						<div id="startActivity" class="collapse" ng-show="action == 'Start Activity' && selectedEntries.activity.length > 0">
+							<table class="table table-striped">
+								<thead>
+									<tr>
+										<th style="width: 150px;">Name</th>
+										<th style="flex: 1; display: inline-block;">Status</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="queueEntry in selectedEntries.activity | orderBy: 'name' track by $index">
+										<td style="width: 150px;"><a class="show-link" href="${createLink(uri: '/show/')}{{queueEntry.id}}">{{queueEntry.name | capitalize}}</a></td>
+										<td style="flex: 1; display: inline-block;">{{queueEntry.status}}</td>
+										<td><a class="text-danger pull-right" style="cursor: pointer;" ng-click="removeFrom(selectedEntries.activity, queueEntry)"><i class="fa fa-times fa-fw" aria-hidden="true"></i></a></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="panel-heading" ng-show="action == 'Status Change' && selectedEntries.status.length > 0">
+							<div class="panel-title">
+								<a href="#statusChange" data-toggle="collapse" ng-controller="ToggleCtrl as toggle" ng-click="toggle.setToggle()">
+									<i class="fa {{!toggle.show ? 'fa-angle-right' : 'fa-angle-down'}}" aria-hidden="true"></i> Status Change
+								</a>
+							</div>
+							<div class="pull-right">
+								{{selectedEntries.status.length}} Selected <button class="btn btn-xs btn-danger" style="margin-top: -2px; margin-left: 5px;" ng-click="clearStatusSelection()">Clear</button>
+							</div>
+						</div>
+						<div id="statusChange" class="collapse" ng-show="action == 'Status Change' && selectedEntries.status.length > 0">
+							<table class="table table-striped">
+								<thead>
+									<tr style="display: flex; position: relative;">
+										<th style="width: 150px;">Name</th>
+										<th style="flex: 1; display: inline-block;">Status</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="queueEntry in selectedEntries.status | orderBy: 'name' track by $index">
+										<td style="width: 150px;"><a class="show-link" href="${createLink(uri: '/show/')}{{queueEntry.id}}">{{queueEntry.name | capitalize}}</a></td>
+										<td style="flex: 1; display: inline-block;">{{queueEntry.status}}</td>
+										<td><a class="text-danger pull-right" style="cursor: pointer;" ng-click="removeFrom(selectedEntries.status, queueEntry)"><i class="fa fa-times fa-fw" aria-hidden="true"></i></a></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+			   </div>
+			</div>
+		</div>
+		<footer class="main-footer"></footer>
+	</body>
+</html>

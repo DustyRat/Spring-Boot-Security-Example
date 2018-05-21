@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="layout" content="main">
+		<title>Bookin Manual Match</title>
+		<script type="text/javascript" src="/js/jquery/js/jquery-ui.min.js" />
+		<link rel="stylesheet" type="text/css" href="/css/jquery/css/jquery-ui.min.css" />
+		<script type="text/javascript" src="/js/main/SortControls.js"></script>
+		<script type="text/javascript" src="/js/main/controllers/BookinController.js"></script>
+	</head>
+	<body layout:fragment="content">
+		<script>
+			$('#bookin-menu').addClass("active");
+			$('#bookin-manual-match-link').addClass("active");
+		</script>
+		<div class="main-content">
+			<div class="container-fluid p-t-50">
+				<div ng-controller="BookinManualMatchCtrl">
+					<div class="panel panel-primary" ng-controller="TabController as tabCtrl">
+						<div class="panel-heading">
+							<div class="panel-title">Find Bookin</div>
+						</div>
+						<div class="tab-container">
+							<ul class="tabs">
+								<li class="tab" ng-class="{active:tabCtrl.isSet(1)}" ng-click="tabCtrl.setTab(1)"><a>Search</a></li>
+								<li class="tab" ng-class="{active:tabCtrl.isSet(2)}" ng-click="tabCtrl.setTab(2)" ng-show="bookin"><a>Bookin</a></li>
+							</ul>
+							<form ng-show="tabCtrl.isSet(1)">
+								<div class="panel-body">
+									<div class="form-line">
+										<div class="form-line">
+											<div class="form-group col-md-4">
+												<label for="number">Bookin Number</label>
+												<input class="form-control" type="text" id="number" ng-model="searchParams.bookin.number">
+											</div>
+											<div class="form-group col-md-4">
+												<label for="lastName">Last Name</label>
+												<input class="form-control" type="text" id="lastName" ng-model="searchParams.bookin.lastName">
+											</div>
+											<div class="form-group col-md-4">
+												<label for="firstName">First Name</label>
+												<input class="form-control" type="text" id="firstName" ng-model="searchParams.bookin.firstName">
+											</div>
+										</div>
+										<div class="form-line">
+											<div class="form-group col-md-4">
+												<label for="ssn">SSN</label>
+												<input class="form-control" type="text" id="ssn" ng-model="searchParams.bookin.ssn">
+											</div>
+											<div class="form-group col-md-2">
+												<label for="gender">Gender</label>
+												<select class="form-control" id="gender" ng-model="searchParams.bookin.gender" ng-options="gender for gender in genders">
+													<option value="">All</option>
+												</select>
+											</div>
+											<div class="form-group col-md-2">
+												<label for="ethnicity">Ethnicity</label>
+												<select class="form-control" id="ethnicity" ng-model="searchParams.bookin.ethnicity" ng-options="ethnicity for ethnicity in ethnicities">
+													<option value="">All</option>
+												</select>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="panel-footer">
+									<button class="btn btn-primary" ng-click="findBookin(tabCtrl);"><i class="fa fa-search" aria-hidden="true"></i> Find Bookin</button>
+								</div>
+							</form>
+							<table class="table table-striped table-hover" ng-show="bookin && tabCtrl.isSet(2)">
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>SSN</th>
+										<th>DOB</th>
+										<th>Gender</th>
+										<th>Ethnicity</th>
+										<th>Bookin Time</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>{{bookin.name | capitalize}}</td>
+										<td>{{bookin.ssn}}</td>
+										<td>{{bookin.dob | date: 'MM/dd/yyyy'}}</td>
+										<td>{{bookin.gender}}</td>
+										<td>{{bookin.ethnicity}}</td>
+										<td>{{bookin.date | date: 'MM/dd/yyyy h:mma'}}</td>
+									</tr>
+								</tbody>
+							</table>
+							<div class="panel-footer" ng-show="tabCtrl.isSet(2) && bookin && navCtrl.isPermitted('actioncreateclient')">
+								<div class="form-inline">
+									<div class="form-group">
+										<input class="form-control" style="width: 200px;" ng-model="number" placeholder="Client Number (Optional)">
+										<button class="btn btn-primary" ng-click="createClient()">Create Client</button>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="panel panel-primary" ng-controller="TabController as tabCtrl" ng-if="bookin">
+						<div class="panel-heading">
+							<div class="panel-title">Search Clients
+								<div class="pull-right" ng-if="clients">
+									<button type="button" class="btn" ng-click="loadPrev(tabCtrl)" ng-style="{'visibility': offset > 0 ? 'visible' : 'hidden'}"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
+									<button type="button" class="btn" ng-click="loadNext(tabCtrl)" ng-style="{'visibility': total > max + offset > 0 ? 'visible' : 'hidden'}"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+								</div>
+							</div>
+						</div>
+						<div class="tab-container">
+							<ul class="tabs">
+								<li class="tab" ng-class="{active:tabCtrl.isSet(1)}" ng-click="tabCtrl.setTab(1)"><a>Search</a></li>
+								<li class="tab" ng-class="{active:tabCtrl.isSet(2)}" ng-click="tabCtrl.setTab(2)" ng-show="clients.length > 0"><a>Results <span class="badge pull-right">{{total}}</span></a></li>
+							</ul>
+							<form ng-show="tabCtrl.isSet(1)">
+								<div class="panel-body">
+									<div class="form-line">
+										<div class="form-group col-md-3">
+											<input class="form-control" id="authoritative" type="checkbox" ng-model="searchParams.client.authoritative">
+											<label for="authoritative">Authoritative Only</label>
+										</div>
+										<div class="form-group col-md-3">
+											<input class="form-control" id="excludeCreated" type="checkbox" ng-model="searchParams.client.excludeCreated">
+											<label for="excludeCreated">Exclude Bookin Clients</label>
+										</div>
+									</div>
+									<div class="form-line">
+										<div class="form-group col-md-4">
+											<label for="number">Client Number</label>
+											<input class="form-control" type="text" id="number" ng-model="searchParams.client.number">
+										</div>
+										<div class="form-group col-md-4">
+											<label for="lastName">Last Name</label>
+											<input class="form-control" type="text" id="lastName" ng-model="searchParams.client.lastName">
+										</div>
+										<div class="form-group col-md-4">
+											<label for="firstName">First Name</label>
+											<input class="form-control" type="text" id="firstName" ng-model="searchParams.client.firstName">
+										</div>
+									</div>
+									<div class="form-line">
+										<div class="form-group col-md-4">
+											<label for="ssn">SSN</label>
+											<input class="form-control" type="text" id="ssn" ng-model="searchParams.client.ssn">
+										</div>
+										<div class="form-inline form-group col-md-4">
+											<div style="width: 100%; padding-bottom: 15px;">
+												<label style="width: 100%;" for="age">Age</label>
+												<input class="form-control simple" type="number" min="18" ng-model="searchParams.client.age.min"> - <input class="form-control simple" type="number" min="18" ng-model="searchParams.client.age.max">
+											</div>
+											<div style="width: 100%; padding-bottom: 15px;">
+												<label style="width: 100%;" for="dob">DOB</label>
+												<input class="form-control simple" type="text" id="from" name="from" ng-model="searchParams.client.dob.min"> - <input class="form-control simple" type="text" id="to" name="to" ng-model="searchParams.client.dob.max">
+											</div>
+										</div>
+										<div class="form-group col-md-2">
+											<label for="gender">Gender</label>
+											<select class="form-control" id="gender" ng-model="searchParams.client.gender" ng-options="gender for gender in genders">
+												<option value="">All</option>
+											</select>
+										</div>
+										<div class="form-group col-md-2">
+											<label for="ethnicity">Ethnicity</label>
+											<select class="form-control" id="ethnicity" ng-model="searchParams.client.ethnicity" ng-options="ethnicity for ethnicity in ethnicities">
+												<option value="">All</option>
+											</select>
+										</div>
+									</div>
+									<br>
+									<span ng-show="clientErrMsg" class="text-danger">{{clientErrMsg}}</span>
+								</div>
+								<div class="panel-footer">
+									<button class="btn btn-primary" ng-click="findClients(tabCtrl);"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+								</div>
+							</form>
+							<div ng-controller="SortCtrl" ng-init="defaultSort='name';itemsPerPage=10;reset();" ng-show="tabCtrl.isSet(2) && clients.length > 0">
+								<div class="panel-body" ng-show="clients.length > 0">
+									<span ng-if="end > 0">Displaying {{begin + 1}} - {{end}} of {{totalItems}}</span>
+									<a class="filter-reset pull-right" ng-click="reset()">Reset Filter</a><br>
+									<form class="filter-bar">
+										<i class="filter-icon fa fa-filter" aria-hidden="true"></i>
+										<input class="form-control" type="text" class="filter-search" placeholder="Filter" ng-model="queryString" ng-model-options="{updateOn: 'default blur', debounce: {'default': 500, 'blur': 0}}">
+									</form>
+								</div>
+								<div class="panel-body" style="text-align: center;" ng-hide="data.length > 0">
+									<span class="text-danger">No Results</span>
+								</div>
+								<table class="table table-striped" ng-show="data.length > 0">
+									<thead>
+										<tr>
+											<th></th>
+											<th class="sortRow" style="width: 200px;" ng-click="changeSort('name')">Name <span class="{{sorted('name') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}"></span></th>
+											<th class="sortRow" ng-click="changeSort('ssn')">SSN <span class="{{sorted('ssn') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}"></span></th>
+											<th class="sortRow" ng-click="changeSort('dob')">DOB <span class="{{sorted('dob') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}"></span></th>
+											<th class="sortRow" style="width: 80px;" ng-click="changeSort('gender')">Gender <span class="{{sorted('gender') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}"></span></th>
+											<th class="sortRow" style="width: 90px;" ng-click="changeSort('ethnicity')">Ethnicity <span class="{{sorted('ethnicity') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}"></span></th>
+											<th class="sortRow" style="width: 200px;" ng-click="changeSort('number')">Client Number <span class="{{sorted('number') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}"></span></th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-repeat="client in data | orderBy:sortType:sortReverse | startFrom:(currentPage-1)*itemsPerPage | limitTo:itemsPerPage track by $index">
+											<td><a style="cursor: pointer" ng-click="match(client)">Match</a></td>
+											<td>{{client.name | capitalize}}</td>
+											<td>{{client.ssn}}</td>
+											<td>{{client.dob | date: 'MM/dd/yyyy'}}</td>
+											<td>{{client.gender}}</td>
+											<td>{{client.ethnicity}}</td>
+											<td>{{client.number}}</td>
+										</tr>
+									</tbody>
+								</table>
+								<div class="text-center">
+									<uib-pagination
+										ng-hide="hide"
+										class="pagination-sm"
+										boundary-links="true"
+										boundary-link-numbers="false"
+										direction-links="true"
+										force-ellipses="false"
+										items-per-page="itemsPerPage"
+										max-size="5"
+										ng-disabled="false"
+										ng-model="currentPage"
+										rotate="true"
+										total-items="totalItems"
+										first-text="&laquo;"
+										previous-text="&lsaquo;"
+										next-text="&rsaquo;"
+										last-text="&raquo;"></uib-pagination>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

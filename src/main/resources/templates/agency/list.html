@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="layout" content="main">
+		<title>Agencies</title>
+		<script type="text/javascript" src="/js/main/SortControls.js"></script>
+		<script type="text/javascript" src="/js/main/controllers/AgencyController.js"></script>
+	</head>
+	<body layout:fragment="content">
+		<script>
+			$('#admin-menu').addClass("active");
+			$('#agency-link').addClass("active");
+		</script>
+		<div class="main-content" ng-controller="AgencyListCtrl">
+			<div class="container-fluid p-t-50">
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<div class="panel-title">
+							Agencies <button type="button" class="btn pull-right" ng-click="addAgency()"><i class="fa fa-plus-circle" aria-hidden="true"></i> Add Agency</button>
+						</div>
+					</div>
+					<div class="panel-table-body" ng-controller="SortCtrl" ng-init="defaultSort='name';itemsPerPage=20;">
+						<table class="table table-body-striped table-body-hover" ng-show="agencies.length > 0">
+							<thead>
+								<tr>
+									<th></th>
+									<th></th>
+									<th class="sortRow" ng-click="changeSort('name')"><i class="{{sorted('name') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Name</th>
+									<th class="sortRow" ng-click="changeSort('npi')"><i class="{{sorted('npi') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>NPI</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody ng-repeat="agency in data | orderBy:sortType:sortReverse | startFrom:(currentPage-1)*itemsPerPage | limitTo:itemsPerPage track by $index" ng-controller="ToggleCtrl as toggle">
+								<tr>
+									<td rowspan="2" class="expand" ng-click="toggle.setToggle()">
+										<i class="{{toggle.show ? 'fa fa-angle-down' : 'fa fa-angle-right'}}" aria-hidden="true" ng-if="agency.programs.length > 0"></i>
+									</td>
+									<td class="action"><a ng-click="editAgency(agency.id)"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</a></td>
+									<td>{{agency.name}}</td>
+									<td>{{agency.npi}}</td>
+									<td class="action"><a class="text-danger uppercase pull-right" ng-click="deleteAgency(agency)" ng-if="agency.isRemovable"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete</a></td>
+								</tr>
+								<tr ng-show="toggle.show">
+									<th>Programs</th>
+									<td colspan="5"><span ng-repeat="program in agency.programs | orderBy: ['name'] track by $index">{{program.name}}{{$last ? '' : ', '}}</span></td>
+								</tr>
+							</tbody>
+						</table>
+						<div class="text-center">
+							<uib-pagination
+								ng-hide="hide"
+								class="pagination-sm"
+								boundary-links="true"
+								boundary-link-numbers="false"
+								direction-links="true"
+								force-ellipses="false"
+								items-per-page="itemsPerPage"
+								max-size="5"
+								ng-disabled="false"
+								ng-model="currentPage"
+								rotate="true"
+								total-items="totalItems"
+								first-text="&laquo;"
+								previous-text="&lsaquo;"
+								next-text="&rsaquo;"
+								last-text="&raquo;"></uib-pagination>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

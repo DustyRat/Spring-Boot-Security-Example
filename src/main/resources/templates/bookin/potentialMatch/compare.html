@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="layout" content="main">
+		<title>Confirm Match</title>
+		<script type="text/javascript" src="/js/main/controllers/PotentialMatchController.js"></script>
+		<style>
+			.panel > pre { background-color: #ffffff; border: none; }
+		</style>
+	</head>
+	<body layout:fragment="content">
+		<script>
+			$('#bookin-menu').addClass("active");
+			$('#bookin-potential-match-link').addClass("active");
+		</script>
+		<div ng-controller="BookinPotentialMatchCompareCtrl">
+			<header class="main-heading">
+				<div class="masthead">
+					<div class="masthead-heading">
+						<a href="${createLink(uri: '/bookin/potentialMatch/show/')}{{id}}"><i class="fa fa-angle-left" aria-hidden="true"></i> Potential Matches</a>
+						<div class="masthead-title">Bookin #{{bookin.number}} and Client {{client.name | capitalize}}</div>
+					</div>
+				</div>
+			</header>
+			<div class="main-content">
+				<div class="container-fluid p-t-50">
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							<div class="panel-title">Confirm Match</div>
+						</div>
+
+						<table class="table table-striped table-hover">
+							<thead>
+								<tr>
+									<th width="100px"></th>
+									<th>Bookin Details</th>
+									<th>Client Details</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>Name:</td>
+									<td>{{bookin.name | capitalize}}</td>
+									<td>{{client.name | capitalize}}</td>
+								</tr>
+								<tr>
+									<td>SSN:</td>
+									<td>{{bookin.ssn}}</td>
+									<td>{{client.ssn}}</td>
+								</tr>
+								<tr>
+									<td>DOB:</td>
+									<td>{{bookin.dob | date:'MM/dd/yyyy'}}</td>
+									<td>{{client.dob | date:'MM/dd/yyyy'}}</td>
+								</tr>
+								<tr>
+									<td>Ethnicity:</td>
+									<td>{{bookin.ethnicity}}</td>
+									<td>{{client.ethnicity}}</td>
+								</tr>
+								<tr>
+									<td>Gender:</td>
+									<td>{{bookin.gender}}</td>
+									<td>{{client.gender}}</td>
+								</tr>
+								<tr>
+									<td>Client Number:</td>
+									<td></td>
+									<td>{{client.number}}</td>
+								</tr>
+							</tbody>
+						</table>
+						<div class="panel-footer" ng-if="navCtrl.isPermitted('actionpotentialmatch') && potentialMatch.status=='New'">
+							<button class="btn btn-primary" ng-click="match()">
+								<i class="fa fa-check-square-o" aria-hidden="true"></i> Confirm Match
+							</button>
+						</div>
+					</div>
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							<div class="panel-title">History</div>
+						</div>
+						<div class="panel-table-body">
+							<table class="table table-body-striped table-body-hover">
+								<tbody ng-repeat="history in potentialMatch.history | orderBy:['dateCreated']:true track by $index">
+									<tr>
+										<th class="uppercase">{{history.username}}</th>
+										<td class="pull-right">{{history.dateCreated | date : 'MMMM dd, yyyy h:mma' }}</td>
+									</tr>
+									<tr><td colspan="2">{{history.details}}</td></tr>
+									<tr ng-if="history.errorMessage"><td colspan="2">{{history.errorMessage}}</td></tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

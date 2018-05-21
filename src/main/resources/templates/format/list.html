@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="layout" content="main">
+		<title>Print Formats</title>
+		<script type="text/javascript" src="/js/main/controllers/PrintFormatController.js"></script>
+	</head>
+	<body layout:fragment="content">
+		<script>
+			$('#admin-menu').addClass("active");
+			$('#print-format-link').addClass("active");
+		</script>
+		<div class="main-content">
+			<div class="container-fluid p-t-50">
+				<div ng-controller="FormatCtrl">
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							<div class="panel-title">
+								Print Formats
+								<button type="button" class="btn pull-right" ng-click="add()"><i class="fa fa-plus-circle" aria-hidden="true"></i> Add</button>
+							</div>
+						</div>
+						<table class="table table-striped table-hover" ng-if="formats.length > 0">
+							<thead>
+								<tr>
+									<th></th>
+									<th>Name</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="format in formats | orderBy: ['name'] track by $index">
+									<td class="action"><a ng-click="edit(format.id)"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</a></td>
+									<td>{{format.name}}</td>
+									<td class="action"><a class="text-danger uppercase pull-right" ng-click="delete(format)"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete</a></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

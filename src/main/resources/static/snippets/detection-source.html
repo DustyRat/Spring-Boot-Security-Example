@@ -1,0 +1,8 @@
+<div class="tab-pane" ng-show="tabCtrl.isSet(3)">
+	<table class="table table-bordered table-condensed table-striped">
+		<tr><td>TLETS:</td><td>{{queueEntry.bookin.tlets | yesNo}}</td></tr>
+		<tr><td>Mental Health Patient:</td><td>{{queueEntry.bookin.mentalHealthPatient | yesNo}}</td></tr>
+		<tr><td>PAP:</td><td>{{queueEntry.bookin.pap | yesNo:'UNK'}}</td></tr>
+		<tr><td>Source:</td><td>{{queueEntry.client.source}}</td></tr>
+	</table>
+</div>

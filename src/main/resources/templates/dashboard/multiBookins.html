@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="layout" content="main">
+		<title>Multi Bookins</title>
+		<script type="text/javascript" src="/js/d3.min.js" />
+		<script type="text/javascript" src="/js/tooltip.js"></script>
+		<script type="text/javascript" src="/js/main/controllers/DashboardController.js"></script>
+	</head>
+	<body layout:fragment="content">
+		<script>
+			$('#dashboard-menu').addClass("active");
+			$('#multi-bookin-link').addClass("active");
+		</script>
+		<div class="main-content">
+			<div class="container-fluid p-t-50">
+				<div class="panel panel-primary" ng-controller="MultiBookinChartCtrl">
+					<div class="panel-heading">
+						<div class="panel-title">
+							<g:select name="year" from="${list}" value="${year}" class="btn selectYear" />
+						</div>
+					</div>
+					<div class="panel-body chart" id="chart"></div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

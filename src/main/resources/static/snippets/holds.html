@@ -1,0 +1,16 @@
+<div class="tab-pane" ng-show="tabCtrl.isSet(2)">
+	<div class="panel-body" style="text-align: center;" ng-hide="queueEntry.bookin.holds.length > 0">
+		<span class="text-danger">No Holds</span>
+	</div>
+	<table class="table table-striped" ng-if="queueEntry.bookin.holds.length > 0">
+		<tbody ng-repeat="hold in queueEntry.bookin.holds | orderBy:'issuedDate' track by $index" >
+			<tr><th width="150px">Agency:</td><td>{{hold.agency}}</td></tr>
+			<tr><th>Issued:</th><td>{{hold.issuedDate | date:'MM/dd/yyyy hh:mm a'}}</td></tr>
+			<tr><th>Offense:</th><td>{{hold.offense}}</td></tr>
+			<tr><th>Warrant:</th><td>{{hold.warrantNo}}</td></tr>
+			<tr><th>Bond Amount:</th><td>{{hold.bondAmount | currency}}</td></tr>
+			<tr><th>Disposition:</th><td>{{hold.disposition}}</td></tr>
+			<tr><th>Need to Magistrate:</th><td>{{hold.needToMagistrate | yesNo}}</td></tr>
+		</tbody>
+	</table>
+</div>

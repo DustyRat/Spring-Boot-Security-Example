@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="layout" content="main">
+		<title>Status Rules Management</title>
+		<script type="text/javascript" src="/js/main/SortControls.js"></script>
+		<script type="text/javascript" src="/js/main/controllers/StatusController.js"></script>
+	</head>
+	<body layout:fragment="content">
+		<script>
+			$('#admin-menu').addClass("active");
+			$('#status-menu').addClass("active");
+			$('#rule-link').addClass("active");
+		</script>
+		<div class="main-content">
+			<div class="container-fluid p-t-50">
+				<div class="panel panel-primary" ng-controller="StatusListCtrl">
+					<div class="panel-heading">
+						<div class="panel-title">
+							Status Rules <button type="button" class="btn pull-right" ng-click="add()"><i class="fa fa-plus-circle" aria-hidden="true"></i> Add</button>
+						</div>
+					</div>
+					<div ng-controller="SortCtrl" ng-init="defaultSort='name';itemsPerPage=20;" ng-show="statuses.length > 0">
+						<div class="panel-body">
+							<span ng-if="end > 0">Displaying {{begin + 1}} - {{end}} of {{totalItems}}</span>
+							<a class="filter-reset pull-right" ng-click="reset()">Reset Filter</a><br>
+							<form class="filter-bar">
+								<i class="filter-icon fa fa-filter" aria-hidden="true"></i>
+								<input type="text" class="filter-search" placeholder="Filter" ng-model="options[$id].filters.$" ng-model-options="{updateOn: 'default blur', debounce: {'default': 700, 'blur': 0}}">
+							</form>
+						</div>
+						<table class="table table-striped table-hover">
+							<thead>
+								<tr>
+									<th></th>
+									<th class="sortRow" ng-click="changeSort('name')"><i class="{{sorted('name') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Name</th>
+									<th class="sortRow" ng-click="changeSort('activities')"><i class="{{sorted('activities') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Activities</th>
+									<th class="sortRow" ng-click="changeSort('changeReasons')"><i class="{{sorted('changeReasons') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Reasons</th>
+									<th>Allow Multiple Reasons</th>
+									<th>Default</th>
+									<th>Enabled</th>
+									<th></th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="status in data | orderBy:sortType:sortReverse | startFrom:(currentPage-1)*itemsPerPage | limitTo:itemsPerPage track by $index">
+									<td class="action"><a ng-click="edit(status.id)"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</a></td>
+									<td>{{status.name}}</td>
+									<td>{{status.activities}}</td>
+									<td>{{status.changeReasons}}</td>
+									<td>{{status.multiple | yesNo}}</td>
+									<td style="width: 10px; text-align: center;"><a ng-click="toggle(status.permission, 'isDefault', !status.permission.isDefault)" ng-disabled="status.permission.isDefault"><i class="{{status.permission.isDefault ? 'fa fa-toggle-on' : 'fa fa-toggle-off'}}" aria-hidden="true"></i></a></td>
+									<td style="width: 10px; text-align: center;"><a ng-click="toggle(status.permission, 'isEnabled', !status.permission.isEnabled)"><i class="{{status.permission.isEnabled ? 'fa fa-toggle-on' : 'fa fa-toggle-off'}}" aria-hidden="true"></i></a></td>
+									<td class="action"><a class="text-danger uppercase pull-right" ng-disabled="status.count > 0 || status.permission.isDefault" ng-click="status.count > 0 || delete(status)" ng-disabled="status.count > 0"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete</a></td>
+								</tr>
+							</tbody>
+						</table>
+						<div class="text-center">
+							<uib-pagination
+								ng-hide="hide"
+								class="pagination-sm"
+								boundary-links="true"
+								boundary-link-numbers="false"
+								direction-links="true"
+								force-ellipses="false"
+								items-per-page="itemsPerPage"
+								max-size="5"
+								ng-disabled="false"
+								ng-model="currentPage"
+								rotate="true"
+								total-items="totalItems"
+								first-text="&laquo;"
+								previous-text="&lsaquo;"
+								next-text="&rsaquo;"
+								last-text="&raquo;"></uib-pagination>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

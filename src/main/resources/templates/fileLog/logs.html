@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="layout" content="main">
+		<title>File Log</title>
+		<script type="text/javascript" src="/js/jquery/js/jquery-ui.min.js" />
+		<link rel="stylesheet" type="text/css" href="/css/jquery/css/jquery-ui.min.css" />
+		<script type="text/javascript" src="/js/main/SortControls.js"></script>
+		<script type="text/javascript" src="/js/main/controllers/FileLogController.js"></script>
+		<style>
+			.progress { position: relative; }
+			.progress-percent {
+				width: 100%;
+				position: absolute;
+				top: 0;
+				left: 0;
+				height: inherit;
+				color: white;
+				mix-blend-mode: difference;
+			}
+		</style>
+	</head>
+	<body layout:fragment="content">
+		<script>
+			$('#admin-menu').addClass("active");
+			$('#file-log-link').addClass("active");
+		</script>
+		<div ng-controller="FileLogCtrl">
+			<div ng-controller="SortCtrl" ng-init="defaultSort='dateCreated';defaultReverse=true;itemsPerPage=25;rememberSort=true;">
+				<header class="main-heading">
+					<div class="panel panel-filter">
+						<div class="panel-heading">
+							<div class="panel-title">
+								<a ng-collapse="#facets:false">
+									<i class="{{display ? 'fa fa-angle-down' : 'fa fa-angle-right'}}" aria-hidden="true"></i> Filters
+								</a>
+								<div class="filter-display">
+									<span ng-show="options[$id].filters.$">"{{options[$id].filters.$}}" - </span><span ng-repeat="(key, item) in options[$id].filters"><span ng-repeat="i in item">{{i == '' ? 'NA' : i}}{{$last ? '' : ' / '}}</span>{{$last ? '' : ' / '}}</span>
+								</div>
+								<a class="filter-reset pull-right" ng-click="reset()">Reset</a><br>
+							</div>
+						</div>
+						<div id="facets" class="panel-body">
+							<form class="filter-bar">
+								<i class="filter-icon fa fa-filter" aria-hidden="true"></i>
+								<input type="text" class="filter-search" placeholder="Filter" ng-model="options[$id].filters.$" ng-model-options="{updateOn: 'default blur', debounce: {'default': 700, 'blur': 0}}">
+							</form>
+							<div class="row">
+								<div class="col-md-12">
+									<facet label="'Type'" key="'process'" size="'150px'"></facet>
+								</div>
+							</div>
+						</div>
+					</div>
+				</header>
+				<div class="main-content">
+					<div class="container-fluid p-t-50" ng-if="(logs | filter:{'dateCompleted': null}).length > 0">
+						<div class="panel panel-primary">
+							<div class="panel-heading">
+								<div class="panel-title">Processing</div>
+							</div>
+							<div class="panel-table-body">
+								<table class="table table-body-striped table-body-hover">
+									<thead>
+										<tr>
+											<th></th>
+											<th class="sortRow" ng-click="changeSort('dateCreated')"><i class="{{sorted('dateCreated') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Created</th>
+											<th class="sortRow" ng-click="changeSort('dateCompleted')"><i class="{{sorted('dateCompleted') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Completed</th>
+											<th class="sortRow" ng-click="changeSort('process')"><i class="{{sorted('process') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Type</th>
+											<th class="sortRow" ng-click="changeSort('fileName')"><i class="{{sorted('fileName') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>File</th>
+											<th class="sortRow" ng-click="changeSort('fileLength')"><i class="{{sorted('fileLength') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Size</th>
+											<th class="sortRow" ng-click="changeSort('total')"><i class="{{sorted('total') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Total</th>
+										</tr>
+									</thead>
+									<tbody class="{{log.dateCompleted ? '' : 'easeInOut'}}" ng-repeat="log in logs | filter:{'dateCompleted': null} | orderBy:sortType:sortReverse | startFrom:(currentPage-1)*itemsPerPage | limitTo:itemsPerPage track by $index" ng-controller="ToggleCtrl as toggle">
+										<tr>
+											<td rowspan="3" class="expand" ng-click="$event.stopPropagation(); toggle.setToggle()">
+												<i class="{{toggle.show ? 'fa fa-angle-down' : 'fa fa-angle-right'}}" aria-hidden="true"></i>
+											</td>
+											<td>{{log.dateCreated | date : 'MM/dd/yyyy h:mma'}}</td>
+											<td style="text-align: center;">
+												<div class="progress" style="margin-bottom: 0;">
+													<div class="progress-bar progress-bar-striped active" role="progressbar" ng-style="{'width': (log.processed/log.total) * 100 + '%'}"></div>
+													<div class="progress-percent">{{(log.processed/log.total) * 100  | number:2}}%</div>
+												</div>
+											</td>
+											<td>{{log.process}}</td>
+											<td><a class="show-link" href="${createLink(uri: '/fileLog/view/')}{{log.id}}">{{log.fileName}}</a></td>
+											<td >{{log.fileLength | fileSize}}</td>
+											<td>{{log.total}}</td>
+										</tr>
+										<tr ng-show="toggle.show">
+											<th>Processed</th><td>{{log.processed}}</td>
+											<th>Created</th><td>{{log.created}}</td>
+											<th>Updated</th><td>{{log.updated}}</td>
+										</tr>
+										<tr ng-show="toggle.show">
+											<th>Errors</th><td>{{log.errors}}</td>
+											<th>Skipped</th><td>{{log.skipped}}</td>
+											<th>Retries</th><td>{{log.retryCount}}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+					<div class="container-fluid p-t-50">
+						<div class="panel panel-primary">
+							<div class="panel-heading">
+								<div class="panel-title">
+									<span ng-if="end > 0">Displaying {{begin + 1}} - {{end}} of {{totalItems}}</span>
+									<span ng-if="end == 0">No Results</span>
+									<form class="inline pull-right">
+										<a style="color: white; font-size: 10px; text-decoration: underline;"ng-click="toggleAutoUpdate()">Auto Update {{autoUpdate ? 'On' : 'Off'}}</a>
+										<input type="text" class="simple" id="from" name="from" value="${params.start}"> - <input type="text" class="simple" id="to" name="to" value="${params.end}">
+										<button class="btn" ng-click="refresh()">Go</button>
+									</form>
+								</div>
+							</div>
+							<div class="panel-body" style="text-align: center;" ng-show="!(data.length > 0)">
+								<span class="text-danger">No Results</span>
+							</div>
+							<div class="panel-table-body">
+								<table class="table table-body-striped table-body-hover" ng-show="data.length > 0">
+									<thead>
+										<tr>
+											<th></th>
+											<th class="sortRow" ng-click="changeSort('dateCreated')"><i class="{{sorted('dateCreated') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Created</th>
+											<th class="sortRow" ng-click="changeSort('dateCompleted')"><i class="{{sorted('dateCompleted') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Completed</th>
+											<th class="sortRow" ng-click="changeSort('process')"><i class="{{sorted('process') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Type</th>
+											<th class="sortRow" ng-click="changeSort('fileName')"><i class="{{sorted('fileName') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>File</th>
+											<th class="sortRow" ng-click="changeSort('fileLength')"><i class="{{sorted('fileLength') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Size</th>
+											<th class="sortRow" ng-click="changeSort('total')"><i class="{{sorted('total') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Total</th>
+										</tr>
+									</thead>
+									<tbody ng-repeat="log in data | orderBy:sortType:sortReverse | startFrom:(currentPage-1)*itemsPerPage | limitTo:itemsPerPage track by $index" ng-controller="ToggleCtrl as toggle">
+										<tr>
+											<td rowspan="3" class="expand" ng-click="$event.stopPropagation(); toggle.setToggle()">
+												<i class="{{toggle.show ? 'fa fa-angle-down' : 'fa fa-angle-right'}}" aria-hidden="true"></i>
+											</td>
+											<td>{{log.dateCreated | date : 'MM/dd/yyyy h:mma'}}</td>
+											<td>{{log.dateCompleted | date : 'MM/dd/yyyy h:mma'}}</td>
+											<td>{{log.process}}</td>
+											<td><a class="show-link" href="${createLink(uri: '/fileLog/view/')}{{log.id}}">{{log.fileName}}</a></td>
+											<td >{{log.fileLength | fileSize}}</td>
+											<td>{{log.total}}</td>
+										</tr>
+										<tr ng-show="toggle.show">
+											<th>Processed</th><td>{{log.processed}}</td>
+											<th>Created</th><td>{{log.created}}</td>
+											<th>Updated</th><td>{{log.updated}}</td>
+										</tr>
+										<tr ng-show="toggle.show">
+											<th>Errors</th><td>{{log.errors}}</td>
+											<th>Skipped</th><td>{{log.skipped}}</td>
+											<th>Retries</th><td>{{log.retryCount}}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<div class="text-center">
+								<uib-pagination
+									ng-hide="hide"
+									class="pagination-sm"
+									boundary-links="true"
+									boundary-link-numbers="false"
+									direction-links="true"
+									force-ellipses="false"
+									items-per-page="itemsPerPage"
+									max-size="5"
+									ng-disabled="false"
+									ng-model="currentPage"
+									rotate="true"
+									total-items="totalItems"
+									first-text="&laquo;"
+									previous-text="&lsaquo;"
+									next-text="&rsaquo;"
+									last-text="&raquo;"></uib-pagination>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

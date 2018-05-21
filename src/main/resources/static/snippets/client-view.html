@@ -1,0 +1,105 @@
+<div class="tab-pane">
+	<div class="col-md-6">
+		<div class="panel panel-primary" ng-controller="TabController as tabCtrl">
+			<div class="panel-heading">
+				<div class="panel-title">Bookin Details</div>
+			</div>
+			<div class="tab-container">
+				<ul class="tabs">
+					<li class="tab" ng-class="{active:tabCtrl.isSet(1)}" ng-click="tabCtrl.setTab(1)">
+						<a>Summary</a>
+					</li>
+					<li class="tab" ng-class="{active:tabCtrl.isSet(2)}" ng-click="tabCtrl.setTab(2)">
+						<a>AIS Client Info</a>
+					</li>
+					<li class="tab" ng-class="{active:tabCtrl.isSet(3)}" ng-click="tabCtrl.setTab(3)">
+						<a>Detection Source</a>
+					</li>
+				</ul>
+			</div>
+			<match-details></match-details>
+			<bookin-details></bookin-details>
+			<detection-source></detection-source>
+		</div>
+		
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<div class="panel-title">Payor Details</div>
+			</div>
+			<client-details></client-details>
+		</div>
+		
+		<div class="panel panel-primary" ng-controller="TabController as tabCtrl" ng-init="tabCtrl.setTab(1)"
+			ng-show="navCtrl.isPermittedAny(['viewservices', 'viewmedications', 'viewlogs'])">
+			<div class="panel-heading">
+				<div class="panel-title">History</div>
+			</div>
+			<div class="tab-container">
+				<ul class="tabs">
+					<li class="tab" ng-class="{active:tabCtrl.isSet(1)}" ng-click="tabCtrl.setTab(1)" ng-show="navCtrl.isPermitted('viewservices')">
+						<a>Services <span class="badge pull-right">{{queueEntry.client.services.length}}</span></a>
+					</li>
+					<li class="tab" ng-class="{active:tabCtrl.isSet(2)}" ng-click="tabCtrl.setTab(2)" ng-show="navCtrl.isPermitted('viewmedications')">
+						<a>Medications <span class="badge pull-right">{{queueEntry.client.medications.length}}</span></a>
+					</li>
+					<li class="tab" ng-class="{active:tabCtrl.isSet(3)}" ng-click="tabCtrl.setTab(3)" ng-show="navCtrl.isPermitted('viewlogs')">
+						<a>Logs <span class="badge pull-right">{{queueEntry.logs.length}}</span></a>
+					</li>
+				</ul>
+			</div>
+			<logs ng-if="navCtrl.isPermitted('viewlogs')"></logs>
+			<medications ng-if="navCtrl.isPermitted('viewmedications')"></medications>
+			<services ng-if="navCtrl.isPermitted('viewservices')"></services>
+		</div>
+	</div>
+	
+	<div class="col-md-6">
+		<div class="panel panel-primary">
+			<div class="panel-heading">
+				<div class="panel-title">Predictive Recidivism</div>
+			</div>
+			<div class="panel-body" ng-if="!predDetails">
+ 				<div ng-show="predErrorMessage">
+ 					<span>{{predErrorMessage}}</span>
+				</div>
+ 				<div ng-show="!predErrorMessage">
+					<i class="fa fa-spinner fa-spin fa-fw"></i> <span>Analyzing predictive data...</span>
+				</div>
+			</div>
+		 	<predictive-details ng-if="predDetails"></predictive-details>
+		</div>
+		
+		<div class="panel panel-primary" ng-controller="noteTabController as tabCtrl" ng-init="tabCtrl.setTab(1)"
+			ng-show="navCtrl.isPermittedAny(['viewcharges', 'viewholds', 'viewnotes', 'viewactivities', 'viewchangereasons'])">
+			<div class="panel-heading">
+				<div class="panel-title">Extended Details</div>
+			</div>
+			<div class="tab-container">
+				<ul class="tabs">
+					<li class="tab" ng-class="{active:tabCtrl.isSet(1)}" ng-click="tabCtrl.setTab(1)" ng-show="navCtrl.isPermitted('viewcharges')">
+						<a>Charges <span class="badge pull-right">{{queueEntry.bookin.charges.length}}</span></a>
+					</li>
+					<li class="tab" ng-class="{active:tabCtrl.isSet(2)}" ng-click="tabCtrl.setTab(2)" ng-show="navCtrl.isPermitted('viewholds')">
+						<a>Holds <span class="badge pull-right">{{queueEntry.bookin.holds.length}}</span></a>
+					</li>
+					<li class="tab" ng-class="{active:tabCtrl.isSet(3)}" ng-click="tabCtrl.setTab(3)" ng-show="navCtrl.isPermitted('viewnotes')">
+						<a>Notes <span class="badge pull-right">{{queueEntry.notes.length}}</span></a>
+					</li>
+				</ul>
+				<ul class="tabs">
+					<li class="tab" ng-class="{active:tabCtrl.isSet(4)}" ng-click="tabCtrl.setTab(4)" ng-show="navCtrl.isPermitted('viewactivities')">
+						<a>Activities <span class="badge pull-right">{{queueEntry.activities.length}}</span></a>
+					</li>
+					<li class="tab" ng-class="{active:tabCtrl.isSet(5)}" ng-click="tabCtrl.setTab(5)" ng-show="navCtrl.isPermitted('viewchangereasons')">
+						<a>Status Change Reasons <span class="badge pull-right">{{queueEntry.changeReasons.length}}</span></a>
+					</li>
+				</ul>
+			</div>
+			<reasons ng-if="navCtrl.isPermitted('viewchangereasons')"></reasons>
+			<activities ng-if="navCtrl.isPermitted('viewactivities')"></activities>
+			<notes ng-if="navCtrl.isPermitted('viewnotes')"></notes>
+			<holds ng-if="navCtrl.isPermitted('viewholds')"></holds>
+			<charges ng-if="navCtrl.isPermitted('viewcharges')"></charges>
+		</div>
+	</div>
+</div>

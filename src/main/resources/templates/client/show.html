@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="layout" content="main">
+		<title>Show Client</title>
+		<script type="text/javascript" src="${resource(dir: 'js/exhibit3', file: 'exhibit-api.js')}?autoCreate=false"></script>
+		<script type="text/javascript" src="${resource(dir: 'js/exhibit3/extensions/time/', file: 'time-extension.js')}"></script>
+		<link rel="stylesheet" type="text/css" href="/css/timeline.css" />
+		<script type="text/javascript" src="/js/timeline-min.js" />
+		<script type="text/javascript" src="/js/main/SortControls.js"></script>
+		<script type="text/javascript" src="/js/main/controllers/ClientController.js"></script>
+		<style>
+			.tl-slide-scrollable-container, .tl-slide-content { width: 100% !important }
+		</style>
+	</head>
+	<body layout:fragment="content">
+		<script>
+			$('#client-menu').addClass("active");
+			$('#client-search-link').addClass("active");
+		</script>
+		<div ng-controller="ShowClientCtrl">
+			<div ng-controller="TabController as tabCtrl" ng-init="tabCtrl.setTab(1);">
+				<header class="main-heading">
+					<div class="masthead">
+						<div class="masthead-heading">
+							<a href="${createLink(uri: '/client/search/')}"><i class="fa fa-angle-left" aria-hidden="true"></i> Client Search</a>
+							<div class="masthead-title">{{client.name | capitalize}}</div>
+						</div>
+						<div class="tab-container">
+							<ul class="tabs">
+								<li class="tab" ng-class="{active:tabCtrl.isSet(1)}" ng-click="tabCtrl.setTab(1); hideTimeLine();"><a>Details</a></li>
+								<li class="tab" ng-class="{active:tabCtrl.isSet(2)}" ng-click="tabCtrl.setTab(2); hideTimeLine();" ng-show="client.demographics.length > 0"><a>Demographics</a></li>
+								<li class="tab" ng-class="{active:tabCtrl.isSet(3)}" ng-click="tabCtrl.setTab(3); hideTimeLine();" ng-show="client.services.length > 0"><a>Services</a></li>
+								<li class="tab" ng-class="{active:tabCtrl.isSet(4)}" ng-click="tabCtrl.setTab(4); hideTimeLine();" ng-show="client.medications.length > 0"><a>Medications</a></li>
+								<li class="tab" ng-class="{active:tabCtrl.isSet(5)}" ng-click="tabCtrl.setTab(5); showTimeLine();" ng-show="navCtrl.isPermitted('viewtimeline')"><a>Time Line</a></li>
+							</ul>
+						</div>
+					</div>
+				</header>
+				<div class="main-content" ng-show="tabCtrl.isSet(1)">
+					<div class="container-fluid p-t-50">
+						<div class="col-md-6">
+							<div class="panel panel-primary">
+								<div class="panel-heading">
+									<div class="panel-title">Client Details</div>
+								</div>
+								<table class="table table-striped">
+									<tr><td>Number</td><td>{{client.number}}</td></tr>
+									<tr><td>Name</td><td>{{client.name | capitalize}}</td></tr>
+									<tr><td>SSN</td><td>{{client.ssn}}</td></tr>
+									<tr><td>DOB</td><td>{{client.dob | date: 'MM/dd/yyyy'}}</td></tr>
+									<tr><td>Gender</td><td>{{client.gender}}</td></tr>
+									<tr><td>Ethnicity</td><td>{{client.ethnicity}}</td></tr>
+								</table>
+							</div>
+						</div>
+						<div class="col-md-12" ng-controller="SortCtrl" ng-init="dataKey='queueEntries';defaultSort='bookin.number';itemsPerPage=25;" ng-show="client.queueEntries.length > 0">
+							<div class="panel panel-primary">
+								<div class="panel-heading">
+									<div class="panel-title">Bookins</div>
+								</div>
+								<div class="panel-body">
+									<span ng-if="end > 0">Displaying {{begin + 1}} - {{end}} of {{totalItems}}</span>
+									<a class="filter-reset pull-right" ng-click="reset()">Reset Filter</a><br>
+									<form class="filter-bar">
+										<i class="filter-icon fa fa-filter" aria-hidden="true"></i>
+										<input type="text" class="filter-search" placeholder="Filter" ng-model="options[$id].filters.$" ng-model-options="{updateOn: 'default blur', debounce: {'default': 700, 'blur': 0}}">
+									</form>
+								</div>
+								<div class="panel-body" style="text-align: center;" ng-hide="data.length > 0">
+									<span class="text-danger">No Results</span>
+								</div>
+								<table class="table table-striped table-hover" ng-show="data.length > 0">	
+									<thead>
+										<tr>
+											<th class="sortRow" ng-click="changeSort('bookin.number')"><i class="{{sorted('bookin.number') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Bookin Number</th>
+											<th class="sortRow" ng-click="changeSort('bookin.name')"><i class="{{sorted('bookin.name') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Name</th>
+											<th class="sortRow" ng-click="changeSort('status')"><i class="{{sorted('status') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Status</th>
+											<th class="sortRow" ng-click="changeSort('bookin.felony')"><i class="{{sorted('bookin.felony') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Felony</th>
+											<th class="sortRow" ng-click="changeSort('bookin.hasParoleViolation')"><i class="{{sorted('bookin.hasParoleViolation') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>P&nbsp;&&nbsp;P</th>
+											<th class="sortRow" ng-click="changeSort('bookin.date')"><i class="{{sorted('bookin.date') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Bookin DateTime</th>
+											<th class="sortRow" ng-click="changeSort('statusUpdated')"><i class="{{sorted('statusUpdated') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Last Status Change</th>
+										</tr>
+									</thead>
+									<tbody>    		
+										<tr ng-repeat="queueEntry in data | orderBy:sortType:sortReverse | startFrom:(currentPage-1)*itemsPerPage | limitTo:itemsPerPage track by $index">
+											<td><a class="show-link" href="${createLink(uri: '/show/')}{{queueEntry.id}}">{{queueEntry.bookin.number}}</a></td>
+											<td>{{queueEntry.bookin.name | capitalize}}</td>
+											<td>{{queueEntry.status}}</td>
+											<td width="5%">{{queueEntry.bookin.felony | capitalize}}</td>
+											<td width="5%">{{queueEntry.bookin.hasParoleViolation | capitalize}}</td>
+											<td>{{queueEntry.bookin.date | date: 'MM/dd/yyyy h:mma'}}</td>
+											<td>{{queueEntry.statusUpdated | date : "MM/dd/yyyy h:mma"}}</td>
+										</tr>		    	
+									</tbody>		    	
+								</table>
+								<div class="text-center">
+									<uib-pagination
+										ng-hide="hide"
+										class="pagination-sm"
+										boundary-links="true"
+										boundary-link-numbers="false"
+										direction-links="true"
+										force-ellipses="false"
+										items-per-page="itemsPerPage"
+										max-size="5"
+										ng-disabled="false"
+										ng-model="currentPage"
+										rotate="true"
+										total-items="totalItems"
+										first-text="&laquo;"
+										previous-text="&lsaquo;"
+										next-text="&rsaquo;"
+										last-text="&raquo;"></uib-pagination>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="main-content" ng-show="tabCtrl.isSet(2)">
+					<div class="container-fluid p-t-50">
+						<div class="panel panel-primary">
+							<div class="panel-heading">
+								<div class="panel-title">Demographics</div>
+							</div>
+							<table class="table table-striped">
+								<thead>
+									<tr>
+										<th>Name</th>
+										<th>SSN</th>
+										<th>DOB</th>
+										<th>Gender</th>
+										<th>Ethnicity</th>
+										<th>Agency</th>
+										<th>Program</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="demographic in client.demographics | orderBy:['agency', 'program']">
+										<td>{{demographic.name | capitalize}}</td>
+										<td>{{demographic.ssn}}</td>
+										<td>{{demographic.dob | date: 'MM/dd/yyyy'}}</td>
+										<td>{{demographic.gender}}</td>
+										<td>{{demographic.ethnicity}}</td>
+										<td>{{demographic.agency | capitalize}}</td>
+										<td>{{demographic.program| capitalize}}</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div ng-controller="SortCtrl" ng-init="dataKey='services';defaultSort='date';defaultReverse=true;itemsPerPage=25;" ng-show="tabCtrl.isSet(3)">
+					<header class="main-heading">
+						<div class="panel panel-filter">
+							<div class="panel-heading">
+								<div class="panel-title">
+									<a ng-collapse="#encFacets:false">
+										<i class="{{display ? 'fa fa-angle-down' : 'fa fa-angle-right'}}" aria-hidden="true"></i> Filters
+									</a>
+									<div class="filter-display">
+										<span ng-show="options[$id].filters.$">"{{options[$id].filters.$}}" - </span><span ng-repeat="(key, item) in options[$id].filters"><span ng-repeat="i in item">{{i == '' ? 'NA' : i}}{{$last ? '' : ' / '}}</span>{{$last ? '' : ' / '}}</span>
+									</div>
+									<a class="filter-reset pull-right" ng-click="reset()">Reset</a>
+								</div>
+							</div>
+							<div id="encFacets" class="panel-body">
+								<form class="filter-bar">
+									<i class="filter-icon fa fa-filter" aria-hidden="true"></i>
+									<input type="text" class="filter-search" placeholder="Filter" ng-model="options[$id].filters.$" ng-model-options="{updateOn: 'default blur', debounce: {'default': 700, 'blur': 0}}">
+								</form>
+								<div class="row">
+									<facet class="col-md-6" label="'Agency'" key="'agency'"></facet>
+									<facet class="col-md-6" label="'Program'" key="'program'"></facet>
+								</div>
+								<div class="row">
+									<facet class="col-md-4" label="'Service'" key="'service'"></facet>
+									<facet class="col-md-4" label="'Contact Type'" key="'contactType'"></facet>
+									<facet class="col-md-4" label="'Outcome'" key="'outcome'"></facet>
+								</div>
+							</div>
+						</div>
+					</header>
+					<div class="main-content">
+						<div class="container-fluid p-t-50">
+							<div class="panel panel-primary">
+								<div class="panel-heading">
+									<div class="panel-title">
+										<span ng-if="end > 0">Displaying {{begin + 1}} - {{end}} of {{totalItems}}</span>
+										<span ng-if="end == 0">No Results</span>
+									</div>
+								</div>
+								<div class="panel-body" ng-hide="data.length > 0">
+									<span class="text-danger">No Results</span>
+								</div>
+								<div class="panel-table-body">
+									<table class="table table-body-striped table-body-hover" ng-show="data.length > 0">
+										<thead>
+											<tr>
+												<th></th>
+												<th class="sortRow" style="width: 130px;" ng-click="changeSort('date')"><i class="{{sorted('date') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Date</th>
+												<th class="sortRow" ng-click="changeSort(['agency','program'])">Agency/Program <i class="{{!equals(['agency','program']) ? '' : sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down'}}" aria-hidden="true"></i></th>
+												<th class="sortRow" ng-click="changeSort('type')"><i class="{{sorted('type') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Type</th>
+												<th class="sortRow" ng-click="changeSort('contactType')"><i class="{{sorted('contactType') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Contact Type</th>
+												<th class="sortRow" ng-click="changeSort('location')"><i class="{{sorted('location') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Location</th>
+												<th class="sortRow" ng-click="changeSort('duration')"><i class="{{sorted('duration') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Duration</th>
+											</tr>
+										</thead>
+										<tbody ng-repeat="service in data | orderBy:sortType:sortReverse | startFrom:(currentPage-1)*itemsPerPage | limitTo:itemsPerPage track by $index"
+											ng-controller="ToggleCtrl as toggle">
+											<tr>
+												<td rowspan="2" class="expand" ng-click="toggle.setToggle()">
+													<i class="{{toggle.show ? 'fa fa-angle-down' : 'fa fa-angle-right'}}" aria-hidden="true"></i>
+												</td>
+												<td>{{service.date | date : 'MM/dd/yyyy h:mma'}}</td>
+												<td>{{service.agency}}/{{service.program}}</td>
+												<td>{{service.type}}</td>
+												<td>{{service.contactType}}</td>
+												<td>{{service.location}}</td>
+												<td>{{service.duration}}</td>
+											</tr>
+											<tr ng-show="toggle.show">
+												<th>Description</th>
+												<td colspan="6">{{service.procedureDescription}}</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								<div class="text-center">
+									<uib-pagination
+										ng-hide="hide"
+										class="pagination-sm"
+										boundary-links="true"
+										boundary-link-numbers="false"
+										direction-links="true"
+										force-ellipses="false"
+										items-per-page="itemsPerPage"
+										max-size="5"
+										ng-disabled="false"
+										ng-model="currentPage"
+										rotate="true"
+										total-items="totalItems"
+										first-text="&laquo;"
+										previous-text="&lsaquo;"
+										next-text="&rsaquo;"
+										last-text="&raquo;"></uib-pagination>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div ng-controller="SortCtrl" ng-init="dataKey='medications';defaultSort='date';defaultReverse=true;itemsPerPage=25;" ng-show="tabCtrl.isSet(4)">
+					<header class="main-heading">
+						<div class="panel panel-filter">
+							<div class="panel-heading">
+								<div class="panel-title">
+									<a ng-collapse="#medFacets:false">
+										<i class="{{display ? 'fa fa-angle-down' : 'fa fa-angle-right'}}" aria-hidden="true"></i> Filters
+									</a>
+									<div class="filter-display">
+										<span ng-show="options[$id].filters.$">"{{options[$id].filters.$}}" - </span><span ng-repeat="(key, item) in options[$id].filters"><span ng-repeat="i in item">{{i == '' ? 'NA' : i}}{{$last ? '' : ' / '}}</span>{{$last ? '' : ' / '}}</span>
+									</div>
+									<a class="filter-reset pull-right" ng-click="reset()">Reset</a>
+								</div>
+							</div>
+							<div id="medFacets" class="panel-body">
+								<form class="filter-bar">
+									<i class="filter-icon fa fa-filter" aria-hidden="true"></i>
+									<input type="text" class="filter-search" placeholder="Filter" ng-model="options[$id].filters.$" ng-model-options="{updateOn: 'default blur', debounce: {'default': 700, 'blur': 0}}">
+								</form>
+								<div class="row">
+									<facet class="col-md-6" label="'Medication'" key="'name'"></facet>
+									<facet class="col-md-6" label="'Provider'" key="'provider'"></facet>
+								</div>
+							</div>
+						</div>
+					</header>
+					<div class="main-content">
+						<div class="container-fluid p-t-50">
+							<div class="panel panel-primary">
+								<div class="panel-heading">
+									<div class="panel-title">
+										<span ng-if="end > 0">Displaying {{begin + 1}} - {{end}} of {{totalItems}}</span>
+										<span ng-if="end == 0">No Results</span>
+									</div>
+								</div>
+								<div class="panel-body" ng-hide="data.length > 0">
+									<span class="text-danger">No Results</span>
+								</div>
+								<table class="table table-striped table-hover">
+									<thead>
+										<tr>
+											<th class="sortRow" ng-click="changeSort('date')"><i class="{{sorted('date') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Date</th>
+											<th class="sortRow" ng-click="changeSort('name')"><i class="{{sorted('name') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Medication</th>
+											<th class="sortRow" ng-click="changeSort('dose')"><i class="{{sorted('dose') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Dose</th>
+											<th class="sortRow" ng-click="changeSort('provider')"><i class="{{sorted('provider') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Provider</th>
+											<th class="sortRow" ng-click="changeSort('dx')"><i class="{{sorted('dx') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Diagnosis</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-repeat="medication in data | orderBy:sortType:sortReverse | startFrom:(currentPage-1)*itemsPerPage | limitTo:itemsPerPage track by $index">
+											<td>{{medication.date | date : "MM/dd/yyyy"}}</td>
+											<td>{{medication.name | capitalize}}</td>
+											<td>{{medication.dose}}</td>
+											<td>{{medication.provider | capitalize}}</td>
+											<td>{{medication.dx}}</td>
+										</tr>
+									</tbody>
+								</table>
+								<div class="text-center">
+									<uib-pagination
+										ng-hide="hide"
+										class="pagination-sm"
+										boundary-links="true"
+										boundary-link-numbers="false"
+										direction-links="true"
+										force-ellipses="false"
+										items-per-page="itemsPerPage"
+										max-size="5"
+										ng-disabled="false"
+										ng-model="currentPage"
+										rotate="true"
+										total-items="totalItems"
+										first-text="&laquo;"
+										previous-text="&lsaquo;"
+										next-text="&rsaquo;"
+										last-text="&raquo;"></uib-pagination>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div ng-controller="SortCtrl" ng-init="dataKey='timeline';update=timeLine;">
+					<header class="main-heading">
+						<div class="panel panel-filter" ng-show="tabCtrl.isSet(5)">
+							<div class="panel-heading">
+								<div class="panel-title">
+									<a ng-collapse="#timelineFacets:false">
+										<i class="{{display ? 'fa fa-angle-down' : 'fa fa-angle-right'}}" aria-hidden="true"></i> Filters
+									</a>
+									<div class="filter-display">
+										<span ng-show="options[$id].filters.$">"{{options[$id].filters.$}}" - </span><span ng-repeat="(key, item) in options[$id].filters"><span ng-repeat="i in item">{{i == '' ? 'NA' : i}}{{$last ? '' : ' / '}}</span>{{$last ? '' : ' / '}}</span>
+									</div>
+									<a class="filter-reset pull-right" ng-click="reset()">Reset</a>
+								</div>
+							</div>
+							<div id="timelineFacets" class="panel-body">
+								<form class="filter-bar">
+									<i class="filter-icon fa fa-filter" aria-hidden="true"></i>
+									<input type="text" class="filter-search" placeholder="Filter" ng-model="options[$id].filters.$" ng-model-options="{updateOn: 'default blur', debounce: {'default': 700, 'blur': 0}}">
+								</form>
+								<div class="row">
+									<facet class="col-md-4" label="'Type'" key="'type'"></facet>
+									<facet class="col-md-4" label="'Location'" key="'location'"></facet>
+									<facet class="col-md-4" label="'Service'" key="'service'"></facet>
+								</div>
+								<div class="row">
+									<facet class="col-md-4" label="'Program'" key="'program'"></facet>
+									<facet class="col-md-4" label="'Contact Type'" key="'contactType'"></facet>
+									<facet class="col-md-4" label="'Outcome'" key="'outcome'"></facet>
+								</div>
+							</div>
+						</div>
+					</header>
+					<div class="main-content">
+						<div class="container-fluid p-t-50">
+							<div class="panel panel-primary" id="timeline-panel" style="display: none;">
+								<div class="panel-heading">
+									<div class="panel-title">
+										<span ng-if="end > 0">Displaying {{totalItems}} of {{total}}</span>
+										<span ng-if="end == 0">No Results</span>
+									</div>
+								</div>
+								<div id="timeline" class="panel-body" style="width: 100%; height: 700px;"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

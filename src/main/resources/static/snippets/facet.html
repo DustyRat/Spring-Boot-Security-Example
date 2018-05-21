@@ -1,0 +1,22 @@
+<div class="facet">
+	<div class="facet-header">
+		<span class="facet-header-title">{{label}}</span>
+		<span class="pull-right" ng-show="service.filters.hasOwnProperty(key)">
+			<a style="cursor: pointer; font-weight: normal; display: block; font-size: 12px;" ng-click="reset()">Reset</a>
+		</span>
+	</div>
+	<div class="facet-body-frame">
+		<div id="{{key}}" class="facet-body" ng-style="{height: '{{size}}'}">
+			<div class="facet-value" ng-repeat="count in counts | orderBy:'value':false:comparator track by count.value" ng-click="select(count.value)">
+				<span class="facet-checkbox pull-left">
+					<i class="{{isChecked(count.value) ? 'fa fa-check-square-o': 'fa fa-square-o'}}"></i>
+				</span>
+				<span class="facet-text">{{count.value | capitalize}}</span>
+				<span class="badge facet-count pull-right">{{count.count}}</span>
+			</div>
+		</div>
+	</div>
+	<div class="resizableDivWidget-resizer" ng-mousedown="resize($event, key + '.facet-body')">
+		<i class="fa fa-caret-down" aria-hidden="true"></i>
+	</div>
+</div>

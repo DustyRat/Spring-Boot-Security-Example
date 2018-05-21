@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="layout" content="main">
+		<title>Add Print Format</title>
+		<script type="text/javascript" src="/js/main/controllers/PrintFormatController.js"></script>
+	</head>
+	<body layout:fragment="content">
+		<script>
+			$('#admin-menu').addClass("active");
+			$('#print-format-link').addClass("active");
+		</script>
+		<div class="main-content">
+			<div class="container-fluid p-t-50">
+				<div ng-controller="CreateFormatCtrl">
+					<div class="panel">
+						<div class="panel-body">
+							<div class="form-inline">
+								<div class="form-group">
+									<label class="control-label" for="format-name">Name</label>
+									<input class="form-control" type="text" id="format-name" ng-model="format.name">
+								</div>
+								<button type="submit" class="btn btn-primary" ng-click="save()" ng-disabled="!format.name || !(format.header.columns.length > 0)"><i class="fa fa-floppy-o" aria-hidden="true"></i> Save</button>
+							</div>
+							<div class="row">
+								<div class="col-sm-12 form-horizontal">
+									<div class="form-group">
+										<div class="col-sm-12"><input class="form-control" type="text" id="title" ng-model="format.title" placeholder="Title"></div>
+									</div>
+									<div class="form-group" ng-controller="TabController as tabCtrl">
+										<div class="tab-container" ng-if="images.length > 0">
+											<ul class="tabs">
+												<li class="tab" ng-class="{active:tabCtrl.isSet(1)}" ng-click="tabCtrl.setTab(1)">
+													<a>Pick Logo</a>
+												</li>
+												<li class="tab"ng-class="{active:tabCtrl.isSet(2)}" ng-click="tabCtrl.setTab(2)">
+													<a>Upload Logo</a>
+												</li>
+											</ul>
+										</div>
+										<image-select base-ref="asset/image/" data="images" key="id" target="format.logo" ng-show="tabCtrl.isSet(1) && images.length > 0"></image-select>
+										<upload ref="asset/uploadImage" accept="image/*" on-success-item="tabCtrl.setTab(1)" ng-show="tabCtrl.isSet(2) || !(images.length > 0)"></upload>
+									</div>
+								</div>
+								<div class="col-sm-6 form-horizontal">
+									<div class="form-group">
+										<div class="checkbox">
+											<input class="form-control" id="showTopDate" type="checkbox" ng-model="format.showTopDate">
+											<label class="control-label" for="showTopDate">Top Date</label>
+
+											<input class="form-control" id="showBottomDate" type="checkbox" ng-model="format.showBottomDate">
+											<label class="control-label" for="showBottomDate">Bottom Date</label>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-2 control-label" for="dateLabel">Label</label>
+										<div class="col-sm-6"><input class="form-control" type="text" id="dateLabel" ng-model="format.dateLabel" ng-disabled="!format.showTopDate && !format.showBottomDate"></div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-2 control-label" for="dateFormat">Format</label>
+										<div class="col-sm-6"><input class="form-control" type="text" id="dateFormat" ng-model="format.dateFormat" ng-disabled="!format.showTopDate && !format.showBottomDate"></div>
+									</div>
+								</div>
+								<div class="col-sm-6 form-horizontal">
+									<div class="form-group">
+										<div class="checkbox">
+											<input class="form-control" id="showTopCount" type="checkbox" ng-model="format.showTopCount">
+											<label class="control-label" for="showTopCount">Top Count</label>
+
+											<input class="form-control" id="showBottomCount" type="checkbox" ng-model="format.showBottomCount">
+											<label class="control-label" for="showBottomCount">Bottom Count</label>
+										</div>
+									</div>
+									<div class="form-group">
+										<label class="col-sm-2 control-label" for="dateLabel">Label</label>
+										<div class="col-sm-6"><input class="form-control" type="text" id="countLabel" ng-model="format.countLabel" ng-disabled="!format.showTopCount && !format.showBottomCount"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="table-responsive">
+							<table class="table">
+								<thead>
+									<tr>
+										<td colspan="{{calculateColumnSpan()}}">
+											<button class="btn btn-primary" style="width: 100%;" ng-click="addHeader(format.header.columns)"><i class="fa fa-plus" aria-hidden="true"></i> Header</button>
+										</td>
+									</tr>
+									<tr>
+										<td style="width: 15px;" ng-if="format.header.columns.length > 0"></td>
+										<td style="min-width: 200px; vertical-align: top;" ng-repeat="header in format.header.columns | orderBy:'index' track by $index" colspan="{{header.colspan}}">
+											<div class="form-group">
+												<select class="form-control" ng-model="header.defaults" ng-options="key.name group by key.domain for key in keys | orderBy: ['domain', 'name']" ng-change="setDefaults(header)">
+													<option value="">Select</option>
+												</select>
+											</div>
+
+											<div class="form-group">
+												<label for="header-colspan">Column Span</label>
+												<input type="number" id="header-colspan" class="form-control" min="1" ng-model="header.colspan">
+											</div>
+
+											<div class="form-group">
+												<label for="header-rowspan">Row Span</label>
+												<input type="number" id="header-rowspan" class="form-control" min="1" ng-model="header.rowspan">
+											</div>
+
+											<div class="form-group" ng-if="header.defaults">
+												<label for="header-sortValue">Sort</label>
+												<select id="header-sortValue" class="form-control" ng-model="header.sortValue" ng-change="setSort()">
+													<option value="">None</option>
+													<option value="ASC">Ascending</option>
+													<option value="DESC">Descending</option>
+												</select>
+											</div>
+
+											<div class="form-group" ng-if="header.defaults">
+												<label for="header-name">Display Name</label>
+												<input type="text" id="header-name" class="form-control" ng-model="header.name">
+											</div>
+
+											<div class="form-group" ng-if="header.type == 'Date'">
+												<label for="header-format">Date Format</label>
+												<input type="text" id="header-format" class="form-control" ng-model="header.format">
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td style="width: 15px;" ng-if="format.header.columns.length > 0"></td>
+										<td style="text-align: center;" ng-repeat="header in format.header.columns | orderBy:'index' track by $index" colspan="{{header.colspan}}" rowspan="{{header.rowspan > 1 ? header.rowspan / 2 : header.rowspan}}">
+											<button class="btn btn-xs" ng-click="moveDown(format.header.columns, $index)" ng-if="!$first"><i class="fa fa-chevron-left fa-fw" aria-hidden="true"></i></button>
+											<button class="btn btn-xs btn-danger" style="width: 100px;" ng-click="remove(format.header.columns, $index)"><i class="fa fa-times fa-fw" aria-hidden="true"></i></button>
+											<button class="btn btn-xs" ng-click="moveUp(format.header.columns, $index)" ng-if="!$last"><i class="fa fa-chevron-right fa-fw" aria-hidden="true"></i></button>
+										</td>
+									</tr>
+								</thead>
+								<tbody ng-repeat="row in format.rows | orderBy:'index' track by $index">
+									<tr>
+										<td style="width: 15px; vertical-align: middle;" rowspan="2">
+											<div style="position: relative; overflow: auto; height: 100%;">
+												<button class="btn btn-xs btn-primary" style="top: 0;" ng-click="addColumn(row)"><i class="fa fa-plus fa-fw" aria-hidden="true"></i></button>
+
+												<button class="btn btn-xs" style="position: absolute; top: 35%;" ng-click="moveDown(format.rows, $index)" ng-show="!$first"><i class="fa fa-chevron-up fa-fw" aria-hidden="true"></i></button>
+												<button class="btn btn-xs" style="position: absolute; top: 55%;" ng-click="moveUp(format.rows, $index)" ng-show="!$last"><i class="fa fa-chevron-down fa-fw" aria-hidden="true"></i></button>
+
+												<button class="btn btn-xs btn-danger" style="position: absolute; bottom: 0;" ng-click="remove(format.rows, $index)"><i class="fa fa-times fa-fw" aria-hidden="true"></i></button>
+											</div>
+										</td>
+										<td style="min-width: 200px; vertical-align: top;" ng-repeat="column in row.columns | orderBy:'index' track by $index" colspan="{{column.colspan}}" rowspan="{{column.rowspan > 1 ? column.rowspan / 2 : column.rowspan}}">
+											<div class="form-group">
+												<select class="form-control" ng-model="column.defaults" ng-options="key.name group by key.domain for key in keys | orderBy: ['domain', 'name']" ng-change="setDefaults(column)">
+													<option value="">Select</option>
+												</select>
+											</div>
+
+											<div class="form-group">
+												<label for="column-colspan">Column Span</label>
+												<input type="number" id="column-colspan" class="form-control" min="1" ng-model="column.colspan">
+											</div>
+
+											<div class="form-group">
+												<label for="column-rowspan">Row Span</label>
+												<input type="number" id="column-rowspan" class="form-control" min="1" ng-model="column.rowspan">
+											</div>
+
+											<div class="form-group" ng-if="column.isHeader">
+												<label for="column-name">Display Name</label>
+												<input type="text" id="column-name" class="form-control" ng-model="column.name">
+											</div>
+
+											<div class="form-group" ng-if="!column.isHeader && column.type == 'Date'">
+												<label for="column-format">Date Format</label>
+												<input type="text" id="column-format" class="form-control" ng-model="column.format">
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td style="text-align: center;" ng-repeat="column in row.columns | orderBy:'index' track by $index" colspan="{{column.colspan}}" rowspan="{{column.rowspan > 1 ? column.rowspan / 2 : column.rowspan}}">
+											<button class="btn btn-xs" ng-click="moveDown(row.columns, $index)" ng-if="!$first"><i class="fa fa-chevron-left fa-fw" aria-hidden="true"></i></button>
+											<button class="btn btn-xs btn-danger" style="width: 100px;" ng-show="row.columns.length > 1" ng-click="remove(row.columns, $index)"><i class="fa fa-times fa-fw" aria-hidden="true"></i></button>
+											<button class="btn btn-xs" ng-click="moveUp(row.columns, $index)" ng-if="!$last"><i class="fa fa-chevron-right fa-fw" aria-hidden="true"></i></button>
+										</td>
+									</tr>
+								</tbody>
+								<tbody>
+									<tr>
+										<td colspan="{{calculateColumnSpan()}}">
+											<button class="btn btn-primary" style="width: 100%;" ng-click="addRow(format.rows)"><i class="fa fa-plus" aria-hidden="true"></i> Row</button>
+										</td>
+									</tr>
+								</tbody>
+								<tfoot style="border-top: 2px solid #dddddd;">
+									<tr>
+										<td colspan="{{calculateColumnSpan()}}">
+											<button class="btn btn-primary" style="width: 100%;" ng-click="addFooter(format.footers)"><i class="fa fa-plus" aria-hidden="true"></i> Footer</button>
+										</td>
+									</tr>
+								</tfoot>
+								<tfoot style="border-top: 2px solid #dddddd;" ng-repeat="footer in format.footers | orderBy:'index' track by $index">
+									<tr>
+										<td style="width: 15px; vertical-align: middle;" rowspan="2">
+											<div style="position: relative; overflow: auto; height: 100%;">
+												<button class="btn btn-xs btn-primary" style="top: 0;" ng-click="addColumn(footer)"><i class="fa fa-plus fa-fw" aria-hidden="true"></i></button>
+
+												<button class="btn btn-xs" style="position: absolute; top: 35%;" ng-click="moveDown(format.footers, $index)" ng-show="!$first"><i class="fa fa-chevron-up fa-fw" aria-hidden="true"></i></button>
+												<button class="btn btn-xs" style="position: absolute; top: 55%;" ng-click="moveUp(format.footers, $index)" ng-show="!$last"><i class="fa fa-chevron-down fa-fw" aria-hidden="true"></i></button>
+
+												<button class="btn btn-xs btn-danger" style="position: absolute; bottom: 0;" ng-click="remove(format.footers, $index)"><i class="fa fa-times fa-fw" aria-hidden="true"></i></button>
+											</div>
+										</td>
+										<td style="min-width: 200px; vertical-align: top;" ng-repeat="column in footer.columns | orderBy:'index' track by $index" colspan="{{column.colspan}}" rowspan="{{column.rowspan > 1 ? column.rowspan / 2 : column.rowspan}}">
+
+											<div class="form-group">
+												<label for="column-name">Contents</label>
+												<input type="text" id="column-name" class="form-control" ng-model="column.name">
+											</div>
+
+											<div class="form-group">
+												<label for="column-colspan">Column Span</label>
+												<input type="number" id="column-colspan" class="form-control" min="1" ng-model="column.colspan">
+											</div>
+
+											<div class="form-group">
+												<label for="column-rowspan">Row Span</label>
+												<input type="number" id="column-rowspan" class="form-control" min="1" ng-model="column.rowspan">
+											</div>
+										</td>
+									</tr>
+									<tr>
+										<td style="text-align: center;" ng-repeat="column in footer.columns | orderBy:'index' track by $index" colspan="{{column.colspan}}" rowspan="{{column.rowspan > 1 ? column.rowspan / 2 : column.rowspan}}">
+											<button class="btn btn-xs" ng-click="moveDown(footer.columns, $index)" ng-if="!$first"><i class="fa fa-chevron-left fa-fw" aria-hidden="true"></i></button>
+											<button class="btn btn-xs btn-danger" style="width: 100px;" ng-show="footer.columns.length > 1" ng-click="remove(footer.columns, $index)"><i class="fa fa-times fa-fw" aria-hidden="true"></i></button>
+											<button class="btn btn-xs" ng-click="moveUp(footer.columns, $index)" ng-if="!$last"><i class="fa fa-chevron-right fa-fw" aria-hidden="true"></i></button>
+										</td>
+									</tr>
+								</tfoot>
+							</table>
+						</div>
+					</div>
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							<div class="panel-title">Preview</div>
+						</div>
+						<div class="panel-body">
+							<div style="position: relative;">
+								<img ng-if="format.logo.id" ng-src="${createLink(uri: '/asset/image/')}{{format.logo.id}}" style="width: 150px; height: 150px;">
+								<h3 ng-style="format.logo.id ? { position: 'absolute', top: '30%', left: '0' } : { height: '30px' }" style="text-align: center; width: 100%;">{{format.title}}</h3>
+							</div>
+							<div ng-if="format.showTopDate">{{format.dateLabel}} {{date | date: format.dateFormat}}</div>
+							<div ng-if="format.showTopCount">{{format.countLabel}} {{examples.length}}</div>
+						</div>
+						<table class="table table-striped table-hover">
+							<thead>
+								<tr>
+									<th ng-repeat="header in format.header.columns | orderBy:'index' track by $index" colspan="{{header.colspan}}">
+										<span style="display: inline-block;">{{header.name}}</span>
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat-start="example in examples | orderBy:format.sort">
+									<td ng-repeat="column in format.header.columns | orderBy:'index' track by $index" colspan="{{column.colspan}}" rowspan="{{column.rowspan}}">
+										{{column.parentKey ?
+											(column.format && column.type == 'Date') ? (example[column.parentKey][column.key] | date: column.format) :
+												column.type == 'Boolean' ? (example[column.parentKey][column.key] | yesNo:'UNK') : example[column.parentKey][column.key]
+										: (column.format && column.type == 'Date') ? (example[column.key] | date: column.format) :
+												column.type == 'Boolean' ? (example[column.key] | yesNo:'UNK') : example[column.key]}}
+									</td>
+								</tr>
+								<tr ng-repeat="row in format.rows | orderBy:'index' track by $index" ng-repeat-end>
+									<th ng-repeat-start="column in row.columns | orderBy:'index' track by $index" colspan="{{column.colspan}}" rowspan="{{column.rowspan}}" ng-if="column.isHeader">
+										{{column.name}}
+									</th>
+									<td colspan="{{column.colspan}}" rowspan="{{column.rowspan}}"  ng-if="!column.isHeader" ng-repeat-end>
+										{{column.parentKey ?
+											(column.format && column.type == 'Date') ? (example[column.parentKey][column.key] | date: column.format) :
+												column.type == 'Boolean' ? (example[column.parentKey][column.key] | yesNo:'UNK') : example[column.parentKey][column.key]
+										: (column.format && column.type == 'Date') ? (example[column.key] | date: column.format) :
+												column.type == 'Boolean' ? (example[column.key] | yesNo:'UNK') : example[column.key]}}
+									</td>
+								</tr>
+							</tbody>
+							<tfoot>
+								<tr ng-repeat="footer in format.footers | orderBy:'index' track by $index">
+									<td style="font-weight: bold; border-top: 2px solid #dddddd; border-bottom: 2px solid #dddddd;" ng-repeat="column in footer.columns | orderBy:'index' track by $index" colspan="{{column.colspan}}" rowspan="{{column.rowspan}}">
+										<span style="display: inline-block;">{{column.name}}</span>
+									</td>
+								</tr>
+							</tfoot>
+						</table>
+						<div class="panel-body">
+							<div ng-if="format.showBottomDate">{{format.dateLabel}} {{date | date: format.dateFormat}}</div>
+							<div ng-if="format.showBottomCount">{{format.countLabel}} {{examples.length}}</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

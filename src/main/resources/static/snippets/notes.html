@@ -1,0 +1,26 @@
+<div class="tab-pane" ng-show="tabCtrl.isSet(3)">
+	<form name="noteForm" ng-if="navCtrl.isPermitted('actioncreatenote')" ng-submit="addNote()">
+		<fieldset class="form-group">
+			<label for="noteTextInput">New Note</label>
+			<textarea required ng-model="note.body"
+				class="form-control input-medium" rows="3"
+				id="noteTextInput" placeholder="Type Note Here"></textarea>
+		</fieldset>
+		<fieldset class="form-group">
+			<button type="submit" class="btn btn-primary pull-right">
+				<i class="fa fa-floppy-o fa-fw" aria-hidden="true"></i> Save Note
+			</button>
+		</fieldset>
+	</form>
+	<table class="table table-responsive table-hover" ng-if="navCtrl.isPermitted('viewnotes') && queueEntry.notes.length > 0">
+		<tbody class="body-highlight" ng-repeat="note in queueEntry.notes | orderBy:'dateCreated':true track by $index">
+			<tr>
+				<th class="uppercase">{{note.author}}</th>
+				<td class="pull-right">{{note.dateCreated | date : 'MMMM dd, yyyy h:mma' }}</td>
+			</tr>
+			<tr>
+				<td colspan="2">{{note.body}}</td>
+			</tr>
+		</tbody>
+	</table>
+</div>

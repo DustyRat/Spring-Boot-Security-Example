@@ -1,0 +1,100 @@
+<div class="tab-pane" ng-show="tabCtrl.isSet(4)">
+	<div class="tab-heading" ng-if="status.activities.length > 0 && navCtrl.isPermitted('actionactivitymanagement')">
+		<div class="tab-title">
+			<button class="btn btn-primary btn-fill btn-start-activity" ng-click="startActivity()">Start</button>
+		</div>
+	</div>
+	<div class="panel-body" style="text-align: center;" ng-hide="queueEntry.activities.length > 0">
+		<span class="text-danger">No Activities</span>
+	</div>
+	<div ng-if="(queueEntry.activities | filter:{'archive': false}).length > 0">
+ 		<table class="table table-striped" ng-repeat="activity in queueEntry.activities | filter:{'archive': false} | orderBy:['-dateCreated', 'name'] track by $index" ng-controller="ToggleCtrl as toggle">
+ 			<thead style="display: table-caption;">
+ 				<tr>
+ 					<td class="expand" style="width: 10px;" ng-click="toggle.setToggle(activity)">
+						<i class="fa {{activity.show ? ' fa-angle-down' : ' fa-angle-right'}}" aria-hidden="true"></i>
+					</td>
+ 					<td colspan="2">{{activity.name}}</td>
+ 				</tr>
+ 			</thead>
+ 			<tbody ng-show="activity.show">
+ 				<tr>
+ 					<th>Status:</th>
+ 					<td>{{activity.status}}</td>
+ 				</tr>
+ 				<tr>
+ 					<th>Description:</th>
+ 					<td>{{activity.description}}</td>
+ 				</tr>
+ 				<tr>
+ 					<th>Author:</th>
+ 					<td>{{activity.username}}</td>
+ 				</tr>
+ 				<tr>
+ 					<th>Started:</th>
+ 					<td>{{activity.dateCreated | date : 'MM/dd/yyyy h:mma'}}</td>
+ 				</tr>
+ 				<tr ng-show="activity.finished">
+ 					<th>Finished:</th>
+ 					<td>{{activity.finished | date : 'MM/dd/yyyy h:mma'}}</td>
+ 				</tr>
+ 				<tr ng-if="navCtrl.isPermittedAny(['actionactivitymanagement', 'actionactivitydelete'])">
+ 					<td colspan="3">
+ 						<button class="btn btn-primary" ng-style="{float: 'left',display: 'block',padding: '10px',width: (navCtrl.isPermitted('actionactivitydelete') ? '49.5%' : '100%')}" ng-click="finishActivity(activity)" ng-show="navCtrl.isPermitted('actionactivitymanagement') && !activity.finished">Finish</button>
+ 						<button class="btn btn-primary" ng-style="{float: 'left',display: 'block',padding: '10px',width: (navCtrl.isPermitted('actionactivitydelete') ? '49.5%' : '100%')}" ng-click="archiveActivity(activity)" ng-show="navCtrl.isPermitted('actionactivitymanagement') && activity.finished">Archive</button>
+ 						<button class="btn btn-danger" ng-style="{float: 'right',display: 'block',padding: '10px',width: (navCtrl.isPermitted('actionactivitymanagement') ? '49.5%' : '100%')}" ng-click="deleteActivity(activity)" ng-if="navCtrl.isPermitted('actionactivitydelete')">DELETE</button>
+ 					</td>
+ 				</tr>
+ 			</tbody>
+ 		</table>
+	</div>
+	
+ 	<div ng-controller="ToggleCtrl as toggleShow" ng-if="(queueEntry.activities | filter:{'archive': true}).length > 0">
+		<div class="panel-heading">
+			<div class="panel-title">
+				<span class="expand" ng-click="toggleShow.setToggle()">
+					<i class="fa {{toggleShow.show ? ' fa-angle-down' : ' fa-angle-right'}}" aria-hidden="true"></i>
+				</span> Archived
+			</div>
+		</div>
+		<div ng-show="toggleShow.show">
+ 			<table class="table table-striped" ng-repeat="activity in queueEntry.activities | filter:{'archive': true} | orderBy:['-dateCreated', 'name'] track by $index" ng-controller="ToggleCtrl as toggle">
+ 				<thead style="display: table-caption;">
+	 				<tr>
+	 					<td class="expand" style="width: 10px;" ng-click="toggle.setToggle(activity)">
+							<i class="fa {{activity.show ? ' fa-angle-down' : ' fa-angle-right'}}" aria-hidden="true"></i>
+						</td>
+	 					<td colspan="2">{{activity.name}}</td>
+	 				</tr>
+	 			</thead>
+ 				<tbody ng-show="activity.show">
+ 					<tr>
+ 						<th>Status:</th>
+ 						<td>{{activity.status}}</td>
+ 					</tr>
+ 					<tr>
+ 						<th>Description:</th>
+ 						<td>{{activity.description}}</td>
+ 					</tr>
+ 					<tr>
+ 						<th>Author:</th>
+ 						<td>{{activity.username}}</td>
+ 					</tr>
+ 					<tr>
+ 						<th>Started:</th>
+ 						<td>{{activity.dateCreated | date : 'MM/dd/yyyy h:mma'}}</td>
+ 					</tr>
+ 					<tr>
+ 						<th>Finished:</th>
+ 						<td>{{activity.finished | date : 'MM/dd/yyyy h:mma'}}</td>
+ 					</tr>
+ 					<tr ng-if="navCtrl.isPermitted('actionactivitydelete')">
+ 						<td colspan="3">
+ 							<button class="btn btn-danger" style="width: 100%; display: block; padding: 10px;" ng-click="deleteActivity(activity)">DELETE</button>
+ 						</td>
+ 					</tr>
+ 				</tbody>
+ 			</table>
+ 		</div>
+ 	</div>
+</div>

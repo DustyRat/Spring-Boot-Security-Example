@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="layout" content="main">
+		<title>Bookin Totals</title>
+		<script type="text/javascript" src="/js/d3.min.js" />
+		<script type="text/javascript" src="/js/tooltip.js"></script>
+		<script type="text/javascript" src="/js/main/controllers/DashboardController.js"></script>
+	</head>
+	<body layout:fragment="content">
+		<script>
+			$('#dashboard-menu').addClass("active");
+			$('#bookin-totals-link').addClass("active");
+		</script>
+		<div class="main-content">
+			<div class="container-fluid p-t-50">
+				<div class="panel panel-primary" ng-controller="BookinTotalChartCtrl">
+					<div class="panel-heading">
+						<div class="panel-title">
+							<g:select name="year" from="${list}" value="${year}" class="btn selectYear" />
+						</div>
+					</div>
+					<div id="chart" class="panel-body chart"></div>
+					<div class="panel-footer-table">
+						<table id="bookinTotalsTable" class="table table-hover chart-table">
+							<thead>
+								<tr>
+									<th class="yearLabel">{{year}}</th>
+									<th ng-repeat="month in data">{{month.Month}}</th>
+								</tr>
+							</thead>
+							<tr class="totalBookins">
+								<td style="border-bottom: 1px solid #dddddd;">Total Bookins ({{total}})</td>
+								<td ng-repeat="month in data" style="border-bottom: 1px solid #dddddd;">
+									{{month.Total}}
+								</td>
+							</tr>
+							<tr class="uniqueBookins">
+								<td>Unique Bookins</td>
+								<td ng-repeat="month in data">
+									{{month['Unique-Bookins']}}
+								</td>
+							</tr>
+							<tr class="multiBookins">
+								<td>Multi-Bookins</td>
+								<td ng-repeat="month in data">
+									{{month['Multi-Bookins']}}
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

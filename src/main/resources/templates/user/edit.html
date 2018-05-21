@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:th="http://www.thymeleaf.org" 
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+	layout:decorate="~{layouts/layout}">
+	<head>
+		<title>Edit User</title>
+		<script type="text/javascript" src="/js/main/controllers/UserController.js"></script>
+	</head>
+	<body layout:fragment="content">
+		<script>
+			$('#admin-menu').addClass("active");
+			$('#user-link').addClass("active");
+		</script>
+		<div class="main-content" ng-controller="EditUserCtrl">
+			<div class="container-fluid p-t-50">
+				<div class="panel panel-primary">
+					<div class="panel-heading">
+						<div class="panel-title">
+							Edit User: {{user.username}}
+						</div>
+					</div>
+					<div class="panel-body">
+						<form>
+							<div class="form-line">
+								<div class="form-group col-sm-4">
+									<div class="has-feedback">
+										<label for="firstName">First Name</label>
+										<input class="form-control" id="firstName" type="text" ng-model="user.firstName" ng-disabled="user.details.readOnly">
+										<span class="form-control-feedback">
+											<i ng-show="!user.firstName" class="fa fa-times text-danger" aria-hidden="true"></i>
+										</span>
+									</div>
+								</div>
+								<div class="form-group has-feedback col-sm-4">
+									<label for="middleName">Middle Name</label>
+									<input class="form-control" id="middleName" type="text" ng-model="user.middleName" ng-disabled="user.details.readOnly">
+								</div>
+								<div class="form-group col-sm-4">
+									<div class="has-feedback">
+										<label for="lastName">Last Name</label>
+										<input class="form-control" id="lastName" type="text" ng-model="user.lastName" ng-disabled="user.details.readOnly">
+										<span class="form-control-feedback">
+											<i ng-show="!user.lastName" class="fa fa-times text-danger" aria-hidden="true"></i>
+										</span>
+									</div>
+								</div>
+							</div>
+							<div class="form-line">
+								<div class="form-group col-sm-4">
+									<label for="phone">Phone</label>
+									<phone-input class="form-control input-block-level" ng-model="user.phone" ng-disabled="user.details.readOnly"><phone-input/>
+								</div>
+								<div class="form-group col-sm-4">
+									<label for="email">Email</label>
+									<input class="form-control" id="email" type="email" ng-model="user.email" ng-disabled="user.details.readOnly">
+								</div>
+								<div class="form-group col-sm-4">
+									<label for="agency">Agency</label>
+									<select class="form-control" id="agency" ng-model="user.agency" ng-options="a.name for a in agencies track by a.id">
+										<option value="">None</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-line" ng-show="user.details && !user.details.readOnly">
+								<!-- TODO: replace directory.pwdPolicyEnabled -->
+								<div class="form-group col-sm-4" ng-show="directory.pwdPolicyEnabled">
+									<button type="button" class="btn  btn-primary" ng-click="resetPassword()">Reset Password</button>
+								</div>
+								<div class="form-group col-sm-4" ng-hide="user.currentUser">
+									<button ng-if="user && user.details.accountLocked" type="button" class="btn btn-primary" ng-click="unlock()"><i class="fa fa-unlock" aria-hidden="true"></i> Unlock</button>
+									<button ng-if="user && !user.details.accountLocked" type="button" class="btn btn-danger" ng-click="lock()"><i class="fa fa-lock" aria-hidden="true"></i> Lock</button>
+								</div>
+							</div>
+						</form>
+					</div>
+					<list-check-box ng-if="user.roles"
+						label="'Assign Roles'"
+						target-item="user"
+						target-item-key="'roles'"
+						selection-items-url="'/role/list'"
+						selection_items-id-key="'id'"
+						selection_items-display-key="'name'"
+						save="update()"
+						cancel="cancel()"></list-check-box>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

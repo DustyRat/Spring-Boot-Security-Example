@@ -1,0 +1,17 @@
+<div class="multi-checkbox-select">
+	<div class="panel-heading multi-heading">
+		<span class="form-label">{{label}}</span>
+	</div>
+	<list-check-box ng-repeat="key in keys" ng-if="labels[$index] && selectionItemsData[key]"
+		label="labels[$index]"
+		target-item="targetItem"
+		target-item-key="targetItemKey"
+		selection-items-data="selectionItemsData[key]"
+		selection_items-id-key="selectionItemsIdKey"
+		selection_items-display-key="selectionItemsDisplayKey"></list-check-box>
+		
+	<div class="panel-footer" ng-if="save || cancel">
+		<button ng-if="save" class="btn btn-primary" ng-click="save()"><i class="fa fa-floppy-o fa-lg" aria-hidden="true"></i> Save</button>
+		<a ng-if="cancel" class="text-danger" ng-click="cancel()"> Cancel</a>
+	</div>
+</div>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="layout" content="main">
+		<title>Potential Match List</title>
+		<script type="text/javascript" src="/js/main/SortControls.js"></script>
+		<script type="text/javascript" src="/js/main/controllers/PotentialMatchController.js"></script>
+	</head>
+	<body layout:fragment="content">
+		<script>
+			$('#bookin-menu').addClass("active");
+			$('#bookin-potential-match-link').addClass("active");
+		</script>
+		<div class="main-content">
+			<div class="container-fluid p-t-50">
+				<div ng-controller="BookinPotentialMatchListCtrl">
+					<div class="panel panel-primary" ng-controller="SortCtrl" ng-init="defaultSort='count';defaultReverse=true;itemsPerPage=25;">
+						<div class="panel-heading">
+							<div class="panel-title">Bookin Potential Match List</div>
+						</div>
+						<div class="panel-body" ng-show="potentialMatches.length > 0">
+							<span ng-if="totalItems == 0" ><label style="color:red;">No Potential Matches Found</label></span>
+							<span ng-if="totalItems > 0">
+								<label><span>{{totalItems}}</span> Potential Matches</label><br>
+								<span ng-if="end > 0">Displaying {{begin + 1}} - {{end}}</span>
+							</span>
+							<a class="filter-reset pull-right" ng-click="reset()">Reset Filter</a><br>
+							<form class="filter-bar">
+								<i class="filter-icon fa fa-filter" aria-hidden="true"></i>
+								<input type="text" class="filter-search" placeholder="Filter" ng-model="options[$id].filters.$" ng-model-options="{updateOn: 'default blur', debounce: {'default': 700, 'blur': 0}}">
+							</form>
+						</div>
+						<div class="panel-body" ng-hide="data.length > 0">
+							<span><label style="color:red;">No Potential Matches Found</label></span>
+						</div>
+						<table class="table table-condensed table-striped" ng-show="data.length > 0">
+							<thead>
+								<tr>
+									<th class="sortRow" ng-click="changeSort('number')"><i class="{{sorted('number') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Bookin Number</th>
+									<th class="sortRow" ng-click="changeSort('name')"><i class="{{sorted('name') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Name</th>
+									<th class="sortRow" ng-click="changeSort('count')"><i class="{{sorted('count') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Possible Matches</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="potentialMatch in data | orderBy:sortType:sortReverse | startFrom:(currentPage-1)*itemsPerPage | limitTo:itemsPerPage track by $index">
+									<td><a class="show-link" href="${createLink(uri: '/bookin/potentialMatch/show/')}{{potentialMatch.id}}">{{potentialMatch.number}}</a></td>
+									<td>{{potentialMatch.name | capitalize}}</td>
+									<td>{{potentialMatch.count}}</td>
+								</tr>
+							</tbody>
+						</table>
+						<div class="text-center">
+							<uib-pagination
+								ng-hide="hide"
+								class="pagination-sm"
+								boundary-links="true"
+								boundary-link-numbers="false"
+								direction-links="true"
+								force-ellipses="false"
+								items-per-page="itemsPerPage"
+								max-size="5"
+								ng-disabled="false"
+								ng-model="currentPage"
+								rotate="true"
+								total-items="totalItems"
+								first-text="&laquo;"
+								previous-text="&lsaquo;"
+								next-text="&rsaquo;"
+								last-text="&raquo;"></uib-pagination>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

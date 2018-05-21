@@ -1,0 +1,165 @@
+@import (reference) 'bootstrap\bootstrap.less';
+@import 'variables';
+@import 'mixins';
+
+.filter-bar {
+	margin-bottom: 15px;
+    position: relative;
+    display: table;
+    border-collapse: separate;
+    width: 100%;
+	
+	.filter-search, .filter-icon {
+		display: table-cell;
+		width: 1%;
+		white-space: nowrap;
+		vertical-align: middle;
+	}
+	
+	.filter-icon {
+		padding: 6px 12px;
+		font-size: 14px;
+		font-weight: normal;
+		color: #555555;
+		text-align: center;
+		background-color: #eeeeee;
+		border: 1px solid #cccccc;
+		border-bottom-left-radius: 4px !important;
+		border-top-left-radius: 4px !important;
+		border-bottom-right-radius: 0 !important;
+		border-top-right-radius: 0 !important;
+	}
+	
+	.filter-search {
+		width: 100%;
+		height: 34px;
+		padding: 6px 12px;
+		font-size: 14px;
+		color: #555555;
+		background-color: #ffffff;
+		background-image: none;
+		border: 1px solid #cccccc;
+		border-bottom-left-radius: 0 !important;
+		border-top-left-radius: 0 !important;
+		border-bottom-right-radius: 4px !important;
+		border-top-right-radius: 4px !important;
+		box-shadow: none !important;
+	}
+}
+
+.filter-display {
+	font-size: 12px;
+	font-weight: @semibold;
+	display: inline-block;
+	padding: 0 10px;
+}
+
+.filter-reset {
+	text-transform: none;
+	font-size: 0.85em;
+    font-weight: normal;
+}
+
+.facet, .exhibit-facet{
+	font-size: 14px;
+	::-webkit-scrollbar {
+		width: 14px;
+		height: 18px;
+	}
+	::-webkit-scrollbar-thumb {
+		height: 6px;
+		border: 4px solid rgba(0, 0, 0, 0);
+		background-clip: padding-box;
+		-webkit-border-radius: 7px;
+		background-color: rgba(0, 0, 0, 0.15);
+		-webkit-box-shadow: inset -1px -1px 0px rgba(0, 0, 0, 0.05), inset 1px 1px 0px rgba(0, 0, 0, 0.05);
+	}
+	::-webkit-scrollbar-button {
+		width: 0;
+		height: 0;
+		display: none;
+	}
+	::-webkit-scrollbar-corner {
+		background-color: transparent;
+	}
+
+	.facet-header, .exhibit-facet-header {
+		.facet-header-title {
+			font-size: 14px;
+			font-weight: @semibold;
+		}
+	}
+	
+	.facet-body-frame, .exhibit-facet-body-frame {
+		.facet-body, .exhibit-facet-body {
+			height: 10em;
+			overflow: auto;
+			background-color: #e3e6ec;
+			border: 1px solid @border-dark-gray;
+			box-shadow: 0 0 8px rgba(0,0,0,0.20) inset;
+			border-radius: 5px;
+			padding: 5px;
+		}
+		
+		.facet-value, .exhibit-facet-value {
+			color: @hli-med-green;
+			cursor: pointer;
+			margin-bottom: 4px;
+			padding: 2px 5px;
+			border: 1px solid @border-dark-gray;
+			border-radius: 5px;
+			box-shadow: 0 0 5px rgba(0,0,0,0.15);
+			background-color: @hli-white;
+			width: 100%;
+			display: table;
+			
+			.exhibit-facet-value-count {
+				.badge;
+				.pull-right;
+				margin: 5px;
+			}
+
+			.exhibit-facet-value-checkbox {
+				float: left !important;
+			}
+			
+			.exhibit-facet-value-link {
+				text-decoration: none;
+				font-size: 16px;
+				font-weight: normal;
+			}
+
+			.facet-checkbox {
+				
+			}
+			
+			.facet-text, .exhibit-facet-value-inner {
+				padding: 5px;
+			}
+
+			.facet-count, .exhibit-facet-value-count {
+				background-color: @hli-white;
+				color: @hli-med-green;
+				border: 1px solid;
+			}
+			
+			&.active, &.exhibit-facet-value-selected {
+				.facet-count, .exhibit-facet-value-count {
+					background-color: @hli-med-green;
+					color: @hli-white;
+				}
+			}
+		}
+	}
+
+	.resizableDivWidget-resizer, .exhibit-resizableDivWidget-resizer {
+		text-align: center;
+		cursor: s-resize;
+		height: 15px;
+		clear: both;
+	}
+}
+
+.exhibit-collectionSummaryWidget-results {
+	padding: 10px;
+}

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="layout" content="main">
+		<title>Scorecard</title>
+		<script type="text/javascript" src="/js/main/controllers/DashboardController.js"></script>
+	</head>
+	<body layout:fragment="content">
+		<script>
+			$('#dashboard-menu').addClass("active");
+			$('#scorecard-link').addClass("active");
+		</script>
+		<div class="main-content">
+			<div class="container-fluid p-t-50">
+				<div ng-controller="ScorecardCtrl">
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							<h3 class="panel-title">Scorecard as of {{date | date: 'MMMM dd yyyy'}}</h3>
+						</div>
+						<table class="table table-striped table-hover">
+							<thead>
+								<tr>
+									<th>Period</th>
+									<th>Measure</th>
+									<th title="Total Number of Matched Bookins Per Day">Bookin Count</th>
+									<th title="Minimum Number of Matched Bookins Per Day">Bookin Min</th>
+									<th title="Maximum Number of Matched Bookins Per Day">Bookin Max</th>
+									<th title="Average Number of Matched Bookins Per Day">Bookin Avg</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<th rowspan="3" style="border-right: 1px solid #dddddd;border-bottom: 1px solid #dddddd;">Week Starting<br>{{firstDayOfWeek | date: 'MM/dd/yyyy'}}</th>
+									<td>Current</td>
+									<td>{{weeks.current.total}}</td>
+									<td>{{weeks.current.min}}</td>
+									<td>{{weeks.current.max}}</td>
+									<td>{{weeks.current.avg}}</td>
+								</tr>
+								<tr>
+									<td>Prior</td>
+									<td>{{weeks.prior.total}}</td>
+									<td>{{weeks.prior.min}}</td>
+									<td>{{weeks.prior.max}}</td>
+									<td>{{weeks.prior.avg}}</td>					
+								</tr>
+								<tr>
+									<td style="border-bottom: 1px solid #dddddd;">% Change</td>
+									<td style="border-bottom: 1px solid #dddddd;">{{weeks.change.total}}</td>
+									<td style="border-bottom: 1px solid #dddddd;">{{weeks.change.min}}</td>
+									<td style="border-bottom: 1px solid #dddddd;">{{weeks.change.max}}</td>
+									<td style="border-bottom: 1px solid #dddddd;">{{weeks.change.avg}}</td>
+								</tr>
+								<tr>
+									<th rowspan="3" style="border-right: 1px solid #dddddd;border-bottom: 1px solid #dddddd;">Month</td>
+									<td>Current</td>
+									<td>{{months.current.total}}</td>
+									<td>{{months.current.min}}</td>
+									<td>{{months.current.max}}</td>
+									<td>{{months.current.avg}}</td>
+								</tr>
+								<tr>
+									<td>Prior</td>
+									<td>{{months.prior.total}}</td>
+									<td>{{months.prior.min}}</td>
+									<td>{{months.prior.max}}</td>
+									<td>{{months.prior.avg}}</td>					
+								</tr>
+								<tr>
+									<td style="border-bottom: 1px solid #dddddd;">% Change</td>
+									<td style="border-bottom: 1px solid #dddddd;">{{months.change.total}}</td>
+									<td style="border-bottom: 1px solid #dddddd;">{{months.change.min}}</td>
+									<td style="border-bottom: 1px solid #dddddd;">{{months.change.max}}</td>
+									<td style="border-bottom: 1px solid #dddddd;">{{months.change.avg}}</td>
+								</tr>
+								<tr>
+									<th rowspan="3" style="border-right: 1px solid #dddddd;border-bottom: 1px solid #dddddd;">${quarter} Quarter</th>
+									<td>Current</td>
+									<td>{{quarters.current.total}}</td>
+									<td>{{quarters.current.min}}</td>
+									<td>{{quarters.current.max}}</td>
+									<td>{{quarters.current.avg}}</td>
+								</tr>
+								<tr>
+									<td>Prior</td>
+									<td>{{quarters.prior.total}}</td>
+									<td>{{quarters.prior.min}}</td>
+									<td>{{quarters.prior.max}}</td>
+									<td>{{quarters.prior.avg}}</td>					
+								</tr>
+								<tr>
+									<td style="border-bottom: 1px solid #dddddd;">% Change</td>
+									<td style="border-bottom: 1px solid #dddddd;">{{quarters.change.total}}</td>
+									<td style="border-bottom: 1px solid #dddddd;">{{quarters.change.min}}</td>
+									<td style="border-bottom: 1px solid #dddddd;">{{quarters.change.max}}</td>
+									<td style="border-bottom: 1px solid #dddddd;">{{quarters.change.avg}}</td>
+								</tr>
+								<tr>
+									<th rowspan="3" style="border-right: 1px solid #dddddd;border-bottom: 1px solid #dddddd;">Year - {{date | date: 'yyyy'}}</th>
+									<td>Current</td>
+									<td>{{years.current.total}}</td>
+									<td>{{years.current.min}}</td>
+									<td>{{years.current.max}}</td>
+									<td>{{years.current.avg}}</td>
+								</tr>
+								<tr>
+									<td>Prior</td>
+									<td>{{years.prior.total}}</td>
+									<td>{{years.prior.min}}</td>
+									<td>{{years.prior.max}}</td>
+									<td>{{years.prior.avg}}</td>					
+								</tr>
+								<tr>
+									<td style="border-bottom: 1px solid #dddddd;">% Change</td>
+									<td style="border-bottom: 1px solid #dddddd;">{{years.change.total}}</td>
+									<td style="border-bottom: 1px solid #dddddd;">{{years.change.min}}</td>
+									<td style="border-bottom: 1px solid #dddddd;">{{years.change.max}}</td>
+									<td style="border-bottom: 1px solid #dddddd;">{{years.change.avg}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

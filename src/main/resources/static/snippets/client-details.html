@@ -1,0 +1,21 @@
+<div class="tab-pane">
+	<table class="table table-striped">
+		<tbody>
+			<tr><th style="width: 195px;">Source</th><td>{{queueEntry.client.source}}</td></tr>
+			<tr>
+				<th>Number</th>
+				<td ng-if="navCtrl.isPermitted('viewclient')"><a class="show-link" ng-click="showClient();">{{queueEntry.client.number}}</a></td>
+				<td ng-if="!navCtrl.isPermitted('viewclient')">{{queueEntry.client.number}}</td>
+			</tr>
+			<tr><th>SSN</th><td>{{queueEntry.client.ssn}}</td></tr>
+			<tr><th>Name</th><td>{{queueEntry.client.name}}</td></tr>
+			<tr><th>DOB</th><td>{{queueEntry.client.dob | date: 'MM/dd/yyyy'}}</td></tr>
+			<tr><th>Ethnicity</th><td>{{queueEntry.client.ethnicity}}</td></tr>
+			<tr><th>Gender</th><td>{{queueEntry.client.gender}}</td></tr>
+			<tr><th>Age at Bookin</th><td>{{queueEntry.ageAtBookin}}</td></tr>
+			<tr><th>Active</th><td>{{queueEntry.client.active}}</td></tr>
+			<tr><th>Activated Date</th><td>{{queueEntry.client.activatedDate | date: 'yyyy-MM-dd hh:mm a'}}</td></tr>
+			<tr><th>Deactivated Date</th><td>{{queueEntry.client.deactivatedDate | date: 'yyyy-MM-dd hh:mm a'}}</td></tr>
+		</tbody>
+	</table>
+</div>

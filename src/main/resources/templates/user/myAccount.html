@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="layout" content="main">
+		<title>My Account</title>	
+		<script type="text/javascript" src="/js/main/controllers/UserController.js"></script>
+	</head>
+
+	<body layout:fragment="content">
+		<div ng-controller="UserManageCtrl">
+			<div ng-controller="TabController as tabCtrl" ng-init="tabCtrl.setTab(1)">
+				<header class="main-heading">
+					<div class="masthead">
+						<div class="masthead-heading">
+							<div class="masthead-title">{{user.username}}</div>
+						</div>
+						<div class="tab-container">
+							<ul class="tabs">
+								<li class="tab" ng-class="{active:tabCtrl.isSet(1)}" ng-click="tabCtrl.setTab(1)"><a>Details</a></li>
+								<li class="tab" ng-class="{active:tabCtrl.isSet(2)}" ng-click="tabCtrl.setTab(2)" ng-if="directory && !directory.readOnly && directory.pwdPolicyEnabled"><a>Password</a></li>
+		<%--						<li class="tab" ng-class="{active:tabCtrl.isSet(3)}" ng-click="tabCtrl.setTab(3)"><a>Questions</a></li>--%>
+							</ul>
+						</div>
+					</div>
+				</header>
+				<div class="main-content">
+					<div class="container-fluid p-t-50">
+						<div class="panel panel-primary" ng-show="tabCtrl.isSet(1)">
+							<div class="panel-heading">
+								<div class="panel-title">Change Details</div>
+							</div>
+							<div class="panel-body">
+								<form>
+									<div class="form-line">
+										<div class="form-group has-feedback col-sm-4">
+											<label for="firstName">First Name</label>
+											<input class="form-control" id="firstName" type="text" ng-model="user.firstName" ng-disabled="directory.readOnly">
+											<i ng-show="!user.firstName" class="form-control-feedback fa fa-times text-danger" aria-hidden="true"></i>
+										</div>
+										<div class="form-group has-feedback col-sm-4">
+											<label for="middleName">Middle Name</label>
+											<input class="form-control" id="middleName" type="text" ng-model="user.middleName" ng-disabled="directory.readOnly">
+										</div>
+										<div class="form-group has-feedback col-sm-4">
+											<label for="lastName">Last Name</label>
+											<input class="form-control" id="lastName" type="text" ng-model="user.lastName" ng-disabled="directory.readOnly">
+											<i ng-show="!user.lastName" class="form-control-feedback fa fa-times text-danger" aria-hidden="true"></i>
+										</div>
+									</div>
+									<div class="form-line">
+										<div class="form-group col-sm-4">
+											<label for="phone">Phone</label>
+											<phone-input class="form-control input-block-level" ng-model="user.phone" ng-disabled="directory.readOnly"><phone-input/>
+										</div>
+										<div class="form-group col-sm-4">
+											<label for="email">Email</label>
+											<input class="form-control" id="email" type="email" ng-model="user.email" ng-disabled="directory.readOnly">
+										</div>
+									</div>
+								</form>
+							</div>
+							<div class="panel-footer">
+								<button class="btn btn-primary" ng-click="update()"><i class="fa fa-floppy-o fa-lg" aria-hidden="true"></i> Save</button>
+								<a ng-if="cancel" class="text-danger" ng-click="cancel()"> Cancel</a>
+							</div>
+						</div>
+						<div class="panel panel-primary" ng-controller="ChangePasswordCtrl" ng-show="tabCtrl.isSet(2)" ng-if="directory && !directory.readOnly && directory.pwdPolicyEnabled">
+							<div class="panel-heading">
+								<div class="panel-title">Change Password</div>
+							</div>
+							<div class="panel-body">
+								<form class="col-sm-6 form-horizontal" autocomplete="off">
+									<div class="form-group">
+										<label for="oldPassword">Current Password</label>
+										<input class="form-control" id="oldPassword" type="password" ng-model="oldPassword" autofocus>
+									</div>
+									<div class="form-group has-feedback">
+										<label for="newPassword">New Password</label>
+										<input class="form-control" id="newPassword" type="password" ng-model="newPassword">
+										<i ng-show="oldPassword" class="form-control-feedback {{newPassword && (newPassword == passwordVerify) ? 'fa fa-check text-success' : 'fa fa-times text-danger'}}" aria-hidden="true"></i>
+									</div>
+									<div class="form-group has-feedback">
+										<label for="passwordVerify">Verify Password</label>
+										<input class="form-control" id="passwordVerify" type="password" ng-model="passwordVerify">
+										<i ng-show="oldPassword" class="form-control-feedback {{passwordVerify && (newPassword == passwordVerify) ? 'fa fa-check text-success' : 'fa fa-times text-danger'}}" aria-hidden="true"></i>
+									</div>
+								</form>
+								<div id="passwordRequirements" class="col-sm-6"></div>
+							</div>
+							<div class="panel-footer">
+								<button class="btn btn-primary" ng-click="save()"><i class="fa fa-floppy-o fa-lg" aria-hidden="true"></i> Update Password</button>
+								<a ng-if="cancel" class="text-danger" ng-click="cancel()"> Cancel</a>
+							</div>
+						</div>
+						<div class="panel panel-primary" ng-show="tabCtrl.isSet(3)">
+							<div class="panel-heading">
+								<div class="panel-title">Change Security Questions</div>
+							</div>
+							<div class="panel-body">
+								<form>
+									<div class="form-line">
+										<div class="form-entry col-sm-12">
+											<label class="form-label" for="question1">Question 1</label>
+											<input id="question1" type="text" ng-model="user.question1" placeholder="Question?">
+											<input id="answer1" type="text" ng-model="user.answer1" placeholder="Answer">
+										</div>
+									</div>
+									<div class="form-line">
+										<div class="form-entry col-sm-12">
+											<label class="form-label" for="question2">Question 2</label>
+											<input id="question2" type="text" ng-model="user.question2" placeholder="Question?">
+											<input id="answer2" type="text" ng-model="user.answer2" placeholder="Answer">
+										</div>
+									</div>
+									<div class="form-line">
+										<div class="form-entry col-sm-12">
+											<label class="form-label" for="question3">Question 3</label>
+											<input id="question3" type="text" ng-model="user.question3" placeholder="Question?">
+											<input id="answer3" type="text" ng-model="user.answer3" placeholder="Answer">
+										</div>
+									</div>
+								</form>
+							</div>
+							<div class="panel-footer">
+								<button class="btn btn-primary" ng-click="save()"><i class="fa fa-floppy-o fa-lg" aria-hidden="true"></i> Save</button>
+								<a ng-if="cancel" class="text-danger" ng-click="cancel()"> Cancel</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

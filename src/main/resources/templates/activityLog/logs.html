@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="layout" content="main">
+		<title>Activity Log</title>
+		<script type="text/javascript" src="/js/jquery/js/jquery-ui.min.js" />
+		<link rel="stylesheet" type="text/css" href="/css/jquery/css/jquery-ui.min.css" />
+		<script type="text/javascript" src="/js/main/SortControls.js"></script>
+		<script type="text/javascript" src="/js/main/controllers/LogController.js"></script>
+	</head>
+	<body layout:fragment="content">
+		<script>
+			$('#admin-menu').addClass("active");
+			$('#log-link').addClass("active");
+		</script>
+		<div ng-controller="ActivityLogCtrl">
+			<div ng-controller="SortCtrl" ng-init="defaultSort='dateCreated';defaultReverse=true;itemsPerPage=25">
+				<header class="main-heading">
+					<div class="panel panel-filter">
+						<div class="panel-heading">
+							<div class="panel-title">
+								<a ng-collapse="#facets:false">
+									<i class="{{display ? 'fa fa-angle-down' : 'fa fa-angle-right'}}" aria-hidden="true"></i> Filters
+								</a>
+								<div class="filter-display">
+									<span ng-show="options[$id].filters.$">"{{options[$id].filters.$}}" - </span><span ng-repeat="(key, item) in options[$id].filters"><span ng-repeat="i in item">{{i == '' ? 'NA' : i}}{{$last ? '' : ' / '}}</span>{{$last ? '' : ' / '}}</span>
+								</div>
+								<a class="filter-reset pull-right" ng-click="reset()">Reset</a>
+							</div>
+						</div>
+						<div id="facets" class="panel-body">
+							<form class="filter-bar">
+								<i class="filter-icon fa fa-filter" aria-hidden="true"></i>
+								<input type="text" class="filter-search" placeholder="Filter" ng-model="options[$id].filters.$" ng-model-options="{updateOn: 'default blur', debounce: {'default': 700, 'blur': 0}}">
+							</form>
+							<div class="row">
+								<div class="col-md-4">
+									<facet label="'Username'" key="'username'" size="'150px'"></facet>
+								</div>
+								<div class="col-md-4">
+									<facet label="'Agency'" key="'agency'" size="'150px'"></facet>
+								</div>
+								<div class="col-md-4">
+									<facet label="'Action'" key="'action'" size="'150px'"></facet>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-4">
+									<facet label="'Description'" key="'description'"></facet>
+								</div>
+								<div class="col-md-4">
+									<facet label="'Status'" key="'status'"></facet>
+								</div>
+								<div class="col-md-4">
+									<facet label="'Type'" key="'type'"></facet>
+								</div>
+							</div>
+						</div>
+					</div>
+				</header>
+				<div class="main-content">
+					<div class="container-fluid p-t-50">
+						<div class="panel panel-primary">
+							<div class="panel-heading">
+								<div class="panel-title">
+									<span ng-if="end > 0">Displaying {{begin + 1}} - {{end}} of {{totalItems}}</span>
+									<span ng-if="end == 0">No Results</span>
+									<form class="inline pull-right">
+										<input type="text" class="simple" style="width: 102px;" id="from" name="from" value="${params.start_date}"> - <input type="text" class="simple" style="width: 102px;" id="to" name="to" value="${params.end_date}">
+										<button class="btn" ng-click="refresh()">Go</button>
+									</form>
+								</div>
+							</div>
+							<div class="panel-table-body">
+								<table class="table table-body-striped table-body-hover">
+									<thead>
+										<tr>
+											<th></th>
+											<th class="sortRow" style="width: 130px;" ng-click="changeSort('dateCreated')"><i class="{{sorted('dateCreated') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Date Time</th>
+											<th class="sortRow" ng-click="changeSort('username')"><i class="{{sorted('username') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Username</th>
+											<th class="sortRow" ng-click="changeSort('agency')"><i class="{{sorted('agency') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Agency</th>
+											<th class="sortRow" style="width: 100px;" ng-click="changeSort('action')"><i class="{{sorted('action') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Action</th>
+											<th class="sortRow" ng-click="changeSort('description')"><i class="{{sorted('description') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Description</th>
+											<th class="sortRow" ng-click="changeSort('bookin')"><i class="{{sorted('bookin') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Bookin</th>
+											<th class="sortRow" ng-click="changeSort('client')"><i class="{{sorted('client') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Client</th>
+											<th class="sortRow" ng-click="changeSort('status')"><i class="{{sorted('status') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Status</th>
+											<th class="sortRow" ng-click="changeSort('type')"><i class="{{sorted('type') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Type</th>
+										</tr>
+									</thead>
+									<tbody ng-repeat="log in data | orderBy:sortType:sortReverse | startFrom:(currentPage-1)*itemsPerPage | limitTo:itemsPerPage track by $index" ng-controller="ToggleCtrl as toggle">
+										<tr>
+											<td rowspan="2" class="expand" style="{{!log.details ? 'cursor: default;' : ''}}" ng-click="$event.stopPropagation(); log.details && toggle.setToggle()">
+												<i class="{{toggle.show ? 'fa fa-angle-down' : 'fa fa-angle-right'}}" aria-hidden="true" ng-if="log.details"></i>
+											</td>
+											<td>{{log.dateCreated | date : 'MM/dd/yyyy h:mma'}}</td>
+											<td>{{log.username}}</td>
+											<td>{{log.agency}}</td>
+											<td>{{log.action}}</td>
+											<td>{{log.description}}</td>
+											<td><a class="show-link" ng-click="findBookin(log.bookin)">{{log.bookin}}</a></td>
+											<td ng-if="navCtrl.isPermitted('viewclient')"><a class="show-link" ng-click="findClient(log.client)">{{log.client}}</a></td>
+											<td ng-if="!navCtrl.isPermitted('viewclient')">{{log.client}}</td>
+											<td>{{log.status}}</td>
+											<td>{{log.type}}</td>
+										</tr>
+										<tr ng-show="toggle.show">
+											<th>Details</th>
+											<td colspan="8">{{log.details}}</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<div class="text-center">
+								<uib-pagination
+									ng-hide="hide"
+									class="pagination-sm"
+									boundary-links="true"
+									boundary-link-numbers="false"
+									direction-links="true"
+									force-ellipses="false"
+									items-per-page="itemsPerPage"
+									max-size="5"
+									ng-disabled="false"
+									ng-model="currentPage"
+									rotate="true"
+									total-items="totalItems"
+									first-text="&laquo;"
+									previous-text="&lsaquo;"
+									next-text="&rsaquo;"
+									last-text="&raquo;"></uib-pagination>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

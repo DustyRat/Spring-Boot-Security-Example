@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="stella"
+	xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:th="http://www.thymeleaf.org"
+    xmlns:sec="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="">
+		<meta name="author" content="HarrisLOGIC, Inc.">
+
+		<link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon" />
+		<title>Stella</title>
+
+		<link rel="stylesheet" type="text/css" href="/js/bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="/css/font-awesome/css/font-awesome.min.css">
+		<link rel="stylesheet" type="text/css" href="/css/animate.css">
+		<link rel="stylesheet" type="text/css" href="/css/metisMenu.min.css">
+		<link rel="stylesheet" type="text/css" href="/css/metis-canvas.min.css">
+
+		<link rel="stylesheet" type="text/css" href="/css/Source_Sans_Pro/source-sans-pro.css">
+
+		<link rel="stylesheet" type="text/css" href="/css/normalize.css">
+		<link rel="stylesheet" type="text/css" href="/js/jquery/css/jqvmap.min.css">
+		<link rel="stylesheet" type="text/css" href="/css/dragula.min.css">
+		<link rel="stylesheet" type="text/css" href="/css/perfect-scrollbar.min.css">
+		<link rel="stylesheet" type="text/css" href="/css/chl.css">
+		<link rel="stylesheet" type="text/css" href="/js/pace/css/pace-theme-minimal.css">
+		<link rel="stylesheet" type="text/css" href="/css/main.css">
+
+		<script type="text/javascript" src="/js/jquery/js/jquery-2.2.4.min.js"></script>
+		<script type="text/javascript" src="/js/bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="/js/moment/moment.min.js"></script>
+		<script type="text/javascript" src="/js/metisMenu.min.js"></script>
+		<script type="text/javascript" src="/js/metis-canvas.min.js"></script>
+
+		<script type="text/javascript" src="/js/underscore-min.js"></script>
+		<script type="text/javascript" src="/js/angular/angular.min.js"></script>
+		<script type="text/javascript" src="/js/angular/angular-route.min.js"></script>
+		<script type="text/javascript" src="/js/bootbox.min.js"></script>
+		<script type="text/javascript" src="/js/pace/js/pace.min.js"></script>
+		
+		<script type="text/javascript" src="/js/bootstrap/js/ui-bootstrap-pagination-1.1.0.min.js"></script>
+		<script type="text/javascript" src="/js/main/app.js"></script>
+		<script type="text/javascript" src="/js/main/controllers.js"></script>
+		<script type="text/javascript" src="/js/main/directives.js"></script>
+		<script type="text/javascript" src="/js/main/filters.js"></script>
+		<script type="text/javascript" src="/js/main/services.js"></script>
+	</head>
+	<body class="app-side-opened">
+		<div class="app" ng-init="id='${params.id}';candidateID='${params.candidateID}';message='${flash.message}'" ng-controller="NavController as navCtrl" ng-cloak>
+			<div class="app-wrap">
+				<header class="app-heading" style="z-index: 500;">
+					<nav class="navbar navbar-default navbar-fixed-top shadow-2dp">
+						<div class="navbar-header">
+						<nav class="nav navbar-header-nav">
+								<a class="visible-xs" href="#" data-side=collapse><i class="fa fa-fw fa-bars"></i></a>
+								<a class="hidden-xs" href="#" data-side=mini><i class="fa fa-fw fa-bars"></i></a>
+							</nav>
+							<div class="navbar-header-left hidden-xs p-l-15">
+								<a class="logo" href="/">
+									<span class="logo-lg"><img src="/images/HLI_logo_white.png" alt="Harris Logic Inc."></span>
+								</a>
+							</div>
+							<ul class="nav navbar-header-nav" style="margin-left: auto;">
+<!--
+								<li class="dropdown">
+									<a class="dropdown-toggle" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+										<span class="b-wisteria fa fa-fw fa-envelope-o u-posRelative"></span>
+										<span class="badge badge-primary b-orange">8 <span class="waves"></span> </span>
+									</a>
+									<ul class="dropdown-menu animated fadeIn w-sm pull-right">
+										<li class="b-b">
+											<div class="media">
+												<div class="media-left">
+													<a class="profile-pic" href="#">
+														<img class="media-object" src="/images/user_icon.png">
+													</a>
+												</div>
+												<div class="media-body">
+													<h5 class="media-heading">
+														<small class="pull-right">12 hours ago</small>
+														<b>USER</b>
+													</h5>
+													started following <strong>USER </strong>
+													<p class="text-muted">3 days ago at 7:12 pm - 10.12.2016</p>
+												</div>
+											</div>
+										</li>
+										<li>
+											<a class="text-center u-block text-asbestos" href="javascript:;">
+												<i class="fa fa-envelope"></i> Read All Messages
+											</a>
+										</li>
+									</ul>
+								</li>
+-->
+<!--
+								<li class="dropdown">
+									<a class="dropdown-toggle" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+										<i class="fa fa-fw fa-bell"></i>
+										<span class="point bg-carrot b-peter-river">
+											<span class="waves"></span>
+										</span>
+									</a>
+									<ul class="dropdown-menu pull-right w-sm animated fadeIn">
+										<li class="p-a-15">
+											<a href="javascript:;">
+												<div class="clearfix">
+													<span class="pull-right text-muted small">4 minutes ago</span>
+													<i class="fa fa-envelope fa-fw"></i>
+													<small>12 messages</small>
+												</div>
+											</a>
+										</li>
+										<li class="p-a-15">
+											<a href="javascript:;">
+												<div class="clearfix">
+													<span class="pull-right text-muted small">3 minutes ago</span>
+													<i class="fa fa-twitter fa-fw"></i>
+													<small>4 follower</small>
+												</div>
+											</a>
+										</li>
+										<li role="separator" class="divider"></li>
+										<li class="text-right">
+											<a class="text-wisteria" href="#"> See all notifications </a>
+										</li>
+									</ul>
+								</li>
+-->
+								<li class="dropdown">
+									<a class="dropdown-toggle profile-pic" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+										<img class="img-circle" src="/images/user_icon.png">
+										<b class="hidden-xs hidden-sm" style="text-transform: none;">{{currentUser.firstName || currentUser.username}}</b>
+									</a>
+									<ul class="dropdown-menu animated fadeIn pull-right">
+										<li><a href="/myAccount"><i class="fa fa-fw fa-cog" aria-hidden="true"></i>My Account</a></li>
+										<li ng-show="currentUser.agency"><a href="/agency"><i class="fa fa-fw fa-cogs" aria-hidden="true"></i>Manage Agency</a></li>
+										<!--<li><a href="#"><i class="fa fa-fw fa-envelope-o" aria-hidden="true"></i>Mail Box</a></li>-->
+										<li role="separator" class="divider"></li>
+										<li><a href="#" ng-click="navCtrl.logout()"><i class="fa fa-fw fa-sign-out" aria-hidden="true"></i>Logout</a></li>
+									</ul>
+								</li>
+<!--
+								<li class="dropdown u-posStatic hidden-xs">
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Mega <span class="caret"></span></a>
+									<ul class="dropdown-menu nav-full-item">
+										<li>
+											<div class="container-fluid">
+												<div class="row">
+													<div class="col-sm-4">
+														<h1 class="text-muted">Heading 1</h1>
+														<h2 class="text-primary">Heading 2</h2>
+														<h3 class="text-warning">Heading 3</h3>
+														<h4 class="text-danger">Heading 4</h4>
+														<h5 class="text-success">Heading 5</h5>
+														<h6 class="text-info">Heading 6</h6>
+													</div>
+													<div class="col-sm-4">
+														<p>Default paragraph</p>
+														<p class="lead">lead paragraph</p>
+														<p class="text-muted">Muted paragraph</p>
+														<p class="text-warning">warning paragraph</p>
+														<p class="text-primary">primary paragraph</p>
+														<p class="text-info">info paragraph</p>
+														<p class="text-success">success paragraph</p>
+														<p class="text-danger">danger paragraph</p>
+													</div>
+													<div class="col-sm-4"><img class="img-responsive" src="/images/p1.svg"/></div>
+												</div>
+											</div>
+										</li>
+									</ul>
+								</li>
+-->
+							</ul>
+						</div>
+					</nav>
+				</header>
+				<div class="app-container">
+					<aside class="app-side">
+						<header class="side-heading">
+							<a class="logo visible-xs" href="/">
+								<span class="logo-lg"><img src="/images/HLI_logo_white.png" alt="Harris Logic Inc."></span>
+							</a>
+						</header>
+						<div class="side-content">
+<!--
+							<div class="user-panel">
+								<div class="user-image">
+									<a href="#"><img class="img-circle" src="/images/user_icon.png"></a>
+								</div>
+								<div class="user-info">
+									<h5>{{currentUser.firstName || currentUser.username}}</h5>
+									<ul class="nav">
+										<li class="dropdown">
+											<a href="#" class="text-turquoise small dropdown-toggle bg-transparent" data-toggle="dropdown">
+												<i class="fa fa-fw fa-circle"></i> Online
+											</a>
+											<ul class="dropdown-menu animated fadeIn pull-right" style="z-index: 1500;">
+												<li><a href="/myAccount"><i class="fa fa-fw fa-cog" aria-hidden="true"></i>My Account</a></li>
+												<li ng-show="agencyId"><a href="/agency"><i class="fa fa-fw fa-cogs" aria-hidden="true"></i>Manage Agency</a></li>
+												<li><a href="#"><i class="fa fa-fw fa-envelope-o" aria-hidden="true"></i>Mail Box</a></li>
+												<li role="separator" class="divider"></li>
+												<li><a href="#" ng-click="navCtrl.logout()"><i class="fa fa-fw fa-sign-out" aria-hidden="true"></i>Logout</a></li>
+											</ul>
+										</li>
+									</ul>
+								</div>
+							</div>
+-->
+							<nav class="side-nav">
+								<ul class="metismenu nav nav-inverse nav-bordered nav-stacked" data-plugin="metismenu">
+									<li id="admin-menu">
+										<a href="javascript:;">
+											<span class="nav-icon"><i class="fa fa-fw fa-lg fa-user-secret"></i></span>
+											<span class="nav-title">Administration</span>
+											<span class="nav-tools">
+												<i class="fa fa-fw arrow"></i>
+											</span>
+										</a>
+										<ul class="nav nav-sub">
+											<li>
+												<a id="agency-link" href="/agencies">
+													<span class="nav-icon"><i class="fa fa-fw fa-cogs"></i></span>
+													<span class="nav-title">Agencies</span>
+												</a>
+											</li>
+											<li>
+												<a id="user-link" href="/users">
+													<span class="nav-icon"><i class="fa fa-fw fa-users"></i></span>
+													<span class="nav-title">Users</span>
+												</a>
+											</li>
+											<li>
+												<a id="role-link" href="/roles">
+													<span class="nav-icon"><i class="fa fa-fw fa-shield"></i></span>
+													<span class="nav-title">Roles</span>
+												</a>
+											</li>
+											<li>
+												<a id="permission-link" href="/permissions">
+													<span class="nav-icon"><i class="fa fa-fw fa-lock"></i></span>
+													<span class="nav-title">Permissions</span>
+												</a>
+											</li>
+											<li ng-show="directory && !directory.readOnly && directory.pwdPolicyEnabled">
+												<a id="password-policy-link" href="/pwdPolicy">
+													<span class="nav-icon"><i class="fa fa-fw fa-cog"></i></span>
+													<span class="nav-title">Password Policy</span>
+												</a>
+											</li>
+											<li id="status-menu">
+												<a href="javascript:;">
+													<span class="nav-icon"><i class="fa fa-fw fa-tags"></i></span>
+													<span class="nav-title">Status Management</span>
+													<span class="nav-tools">
+														<i class="fa fa-fw arrow"></i>
+													</span>
+												</a>
+												<ul class="nav nav-sub">
+													<li>
+														<a id="rule-link" href="/statuses">
+															<span class="nav-icon"><i class="fa fa-fw fa-sticky-note"></i></span>
+															<span class="nav-title">Rules</span>
+														</a>
+													</li>
+													<li>
+														<a id="activity-link" href="/activities">
+															<span class="nav-icon"><i class="fa fa-fw fa-folder-open"></i></span>
+															<span class="nav-title">Activities</span>
+														</a>
+													</li>
+													<li>
+														<a id="reason-link" href="/changeReasons">
+															<span class="nav-icon"><i class="fa fa-fw fa-list"></i></span>
+															<span class="nav-title">Change Reasons</span>
+														</a>
+													</li>
+												</ul>
+											</li>
+											<li>
+												<a id="print-format-link" href="/formats">
+													<span class="nav-icon"><i class="fa fa-fw fa-print"></i></span>
+													<span class="nav-title">Print Format</span>
+												</a>
+											</li>
+											<li>
+												<a id="log-link" href="/logs">
+													<span class="nav-icon"><i class="fa fa-fw fa-book"></i></span>
+													<span class="nav-title">Activity Log</span>
+												</a>
+											</li>
+											<li>
+												<a id="file-log-link" href="/fileLogs">
+													<span class="nav-icon"><i class="fa fa-fw fa-file"></i></span>
+													<span class="nav-title">File Log</span>
+												</a>
+											</li>
+										</ul>
+									</li>
+									<li id="bookin-menu">
+										<a href="javascript:;">
+											<span class="nav-icon"><i class="fa fa-fw fa-lg fa-gavel"></i></span>
+											<span class="nav-title">Bookins</span>
+											<span class="nav-tools">
+												<i class="fa fa-fw arrow"></i>
+											</span>
+										</a>
+										<ul class="nav nav-sub">
+											<li>
+												<a id="bookin-grid-link" href="/">
+													<span class="nav-icon"><i class="fa fa-fw fa-clipboard"></i></span>
+													<span class="nav-title">Management</span>
+													<span class="nav-tools">
+														<span class="badge badge-primary" ng-if="queueEntries > 0">{{queueEntries}}</span>
+													</span>
+												</a>
+											</li>
+											<li>
+												<a id="bookin-search-link" href="/search">
+													<span class="nav-icon"><i class="fa fa-fw fa-search"></i></span>
+													<span class="nav-title">Search</span>
+												</a>
+											</li>
+											<li>
+												<a id="bookin-potential-match-link" href="/bookin/potentialMatch/list">
+													<span class="nav-icon"><i class="fa fa-fw fa-check-square-o"></i></span>
+													<span class="nav-title">Potential Match</span>
+													<span class="nav-tools">
+														<span class="badge badge-primary" ng-if="potentialMatches > 0">{{potentialMatches}}</span>
+													</span>
+												</a>
+											</li>
+											<li>
+												<a id="bookin-manual-match-link" href="/bookin/match">
+													<span class="nav-icon"><i class="fa fa-fw fa-exchange"></i></span>
+													<span class="nav-title">Manual Match</span>
+												</a>
+											</li>
+										</ul>
+									</li>
+									<li id="client-menu">
+										<a href="javascript:;">
+											<span class="nav-icon"><i class="fa fa-fw fa-lg fa-id-card-o"></i></span>
+											<span class="nav-title">Clients</span>
+											<span class="nav-tools">
+												<i class="fa fa-fw arrow"></i>
+											</span>
+										</a>
+										<ul class="nav nav-sub">
+											<li>
+												<a id="client-search-link" href="/client/search">
+													<span class="nav-icon"><i class="fa fa-fw fa-search"></i></span>
+													<span class="nav-title">Search</span>
+												</a>
+											</li>
+											<li>
+												<a id="client-potential-match-link" href="/client/potentialMatch/list">
+													<span class="nav-icon"><i class="fa fa-fw fa-check-square-o"></i></span>
+													<span class="nav-title">Potential Match</span>
+													<span class="nav-tools">
+														<span class="badge badge-primary" ng-if="clients > 0">{{clients}}</span>
+													</span>
+												</a>
+											</li>
+										</ul>
+									</li>
+									<li id="dashboard-menu">
+										<a href="javascript:;">
+											<span class="nav-icon"><i class="fa fa-fw fa-lg fa-tachometer"></i></span>
+											<span class="nav-title">Dashboards</span>
+											<span class="nav-tools">
+												<i class="fa fa-fw arrow"></i>
+											</span>
+										</a>
+										<ul class="nav nav-sub">
+											<li>
+												<a id="bookin-totals-link" href="/dashboard/bookinTotals">
+													<span class="nav-icon"><i class="fa fa-fw fa-line-chart"></i></span>
+													<span class="nav-title">Bookin Totals</span>
+												</a>
+											</li>
+											<li>
+												<a id="multi-bookin-link" href="/dashboard/multiBookins">
+													<span class="nav-icon"><i class="fa fa-fw fa-bar-chart"></i></span>
+													<span class="nav-title">Multi Bookins</span>
+												</a>
+											</li>
+											<li>
+												<a id="scorecard-link" href="/dashboard/scorecard">
+													<span class="nav-icon"><i class="fa fa-fw fa-percent"></i></span>
+													<span class="nav-title">Scorecard</span>
+												</a>
+											</li>
+											<li>
+												<a id="active-today-link" href="/dashboard/activeToday">
+													<span class="nav-icon"><i class="fa fa-fw fa-calendar-o"></i></span>
+													<span class="nav-title">Active Today</span>
+												</a>
+											</li>
+										</ul>
+									</li>
+									<li id="reports-menu">
+										<a href="/reports/biLaunchPad">
+											<span class="nav-icon"><i class="fa fa-fw fa-lg fa-flag"></i></span>
+											<span class="nav-title">Reporting Launchpad</span>
+										</a>
+									</li>
+								</ul>
+							</nav>
+						</div>
+						<footer class="side-footer"></footer>
+					</aside>
+					<div class="side-visible-line hidden-xs" data-side="collapse"><i class="fa fa-caret-left"></i></div>
+					<div class="app-main">
+						<div layout:fragment="content">
+							<!-- ============================================================================ -->
+						    <!-- This content is only used for static prototyping purposes (natural templates)-->
+						    <!-- and is therefore entirely optional.                                          -->
+						    <!-- ============================================================================ -->
+						    <h1>Static content for prototyping purposes only</h1>
+						    <p>
+						        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+						        Praesent scelerisque neque neque, ac elementum quam dignissim interdum.
+						        Phasellus et placerat elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+						        Praesent scelerisque neque neque, ac elementum quam dignissim interdum.
+						        Phasellus et placerat elit.
+						    </p>
+					    </div>
+					</div>
+					<div sec:authorize="isAuthenticated()"> This content is only shown to authenticated users. </div>
+					<div sec:authorize="hasRole('ADMIN')"> This content is only shown to administrators. </div>
+					<div sec:authorize="hasRole('USER')"> This content is only shown to users. </div>
+<!--						
+					<div style="z-index: 90000; width: 100%; height: 100%; position: absolute; background: #e9ebf0;">
+						<div class="app-login" style="top: 25%;">
+							<div class="text-center box shadow-5 b-r-4 p-a-20">
+								<h4>Please Sign In</h4>
+								<g:form class="text-left" autocomplete="off" controller="auth" action="signIn" method="POST" useToken="true">
+									<g:hiddenField name="rememberMe" value="${flash.rememberMe}"/>
+									<div class="form-group has-feedback">
+										<input class="form-control" placeholder="Username" type="text" name="username" autofocus>
+										<span class="form-control-feedback"><i class="fa fa-fw fa-user"></i></span>
+									</div>
+									<div class="form-group has-feedback">
+										<input class="form-control" placeholder="Password" autocomplete="off" type="password" name="password">
+										<span class="form-control-feedback"><i class="fa fa-fw fa-key"></i></span>
+									</div>
+									<button type="submit" class="btn btn-primary btn-block m-b-15">Login</button>
+									<div class="login-error">
+										<g:if test="${flash.message}">${flash.message}</g:if>
+									</div>
+								</g:form>
+							</div>
+						</div>
+					</div>
+-->
+				</div>
+				<footer class="app-footer p-t-10 text-white">
+					<div class="container-fluid">
+						<span class="small" style="position: absolute; left: 0px;" data-momentum="clock" data-format="MMMM Do YYYY, h:mm:ss a"></span>
+						<p class="text-center small">HarrisLOGIC, Inc.</p>
+					</div>
+				</footer>
+			</div>
+		</div>
+		<span class="fa fa-angle-up" id="totop" data-plugin="totop"></span>
+		<script type="text/javascript" src="/js/perfect-scrollbar.min.js"></script>
+		<script type="text/javascript" src="/js/dragula.min.js"></script>
+		<script type="text/javascript" src="/js/moment/moment-with-locales.min.js"></script>
+		<script type="text/javascript" src="/js/chl.js"></script>
+		<script type="text/javascript" src="/js/application.js"></script>
+	</body>
+</html>

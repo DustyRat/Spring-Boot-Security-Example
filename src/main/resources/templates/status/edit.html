@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="layout" content="main">
+		<title>Edit Status Rule</title>
+		<script type="text/javascript" src="/js/main/controllers/StatusController.js"></script>
+	</head>
+	<body layout:fragment="content">
+		<script>
+			$('#admin-menu').addClass("active");
+			$('#status-menu').addClass("active");
+			$('#rule-link').addClass("active");
+		</script>
+		<div class="main-content">
+			<div class="container-fluid p-t-50">
+				<div class="panel panel-primary" ng-controller="EditStatusCtrl">
+					<div class="panel-heading">
+						<div class="panel-title">Edit Status Rule</div>
+					</div>
+					<div class="panel-body">
+						<div class="form-group col-md-4">
+							<label for="name">Name</label>
+							<input type="text" class="form-control input-block-level" id="name" ng-model="status.name" ng-disabled="status.count > 0">
+							<span id="warning2" style="color: #FF0000" hidden>*Required</span>
+						</div>
+						<div class="pull-right">
+							<div class="form-group">
+								<input type="checkbox" class="form-control" id="isDefault" ng-model="status.permission.isDefault" ng-disabled="disable">
+								<label for="isDefault">Default Status</label>
+							</div>
+							<div class="form-group">
+								<input type="checkbox" class="form-control" id="isEnabled" ng-model="status.permission.isEnabled">
+								<label for="isEnabled">Change To Status Enabled</label>
+							</div>
+							<div class="form-group">
+								<input type="checkbox" class="form-control" id="multiple" ng-model="status.multiple">
+								<label for="multiple">Allow Multiple Change Reasons</label>
+							</div>
+						</div>
+					</div>
+
+					<list-check-box ng-if="status.activities"
+						label="'Activities'"
+						target-item="status"
+						target-item-key="'activities'"
+						selection-items-url="'${createLink(uri: '/activity/getActivities')}'"
+						selection_items-id-key="'id'"
+						selection_items-display-key="'name'"></list-check-box>
+
+					<list-check-box ng-if="status.changeReasons"
+						label="'Status Change Reasons'"
+						target-item="status"
+						target-item-key="'changeReasons'"
+						selection-items-url="'${createLink(uri: '/changeReason/getChangeReasons')}'"
+						selection_items-id-key="'id'"
+						selection_items-display-key="'name'"
+						save="save()"
+						cancel="cancel()"></list-check-box>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

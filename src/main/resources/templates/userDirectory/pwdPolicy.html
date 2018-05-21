@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="layout" content="main">
+		<title>Password Policy</title>
+		<link rel="stylesheet" type="text/css" href="/css/jquery/css/jquery-ui.min.css" />
+		<script type="text/javascript" src="/js/jquery/js/jquery-ui.min.js" />
+		<script type="text/javascript" src="/js/main/controllers/DirectoryController.js"></script>
+	</head>
+	<body layout:fragment="content">
+		<script>
+			$('#admin-menu').addClass("active");
+			$('#password-policy-link').addClass("active");
+			$(document).ready(function(){
+				$('[data-toggle="tooltip"]').tooltip({container: 'body', placement: 'bottom'});
+			});
+		</script>
+		<div class="main-content">
+			<div class="container-fluid p-t-50">
+				<div class="panel panel-primary" ng-controller="PwdPolicyCtrl">
+					<div class="panel-heading">
+						<div class="panel-title">Password Policy</div>
+					</div>
+					<div class="panel-body">
+						<form>
+							<div class="form-line">
+								<div class="form-group col-md-3">
+									<label for="upper">Upper Case <i class="fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" title="Minimum number of upper case characters that must be used in a password."></i></label>
+									<input class="form-control" id="upper" type="number" min="0" string-to-number ng-model="passwordRestriction.upper">
+								</div>
+								<div class="form-group col-md-3">
+									<label for="lower">Lower Case <i class="fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" title="Minimum number of lower case characters that must be used in a password."></i></label>
+									<input class="form-control" id="lower" type="number" min="0" string-to-number ng-model="passwordRestriction.lower">
+								</div>
+								<div class="form-group col-md-3">
+									<label for="number">Number <i class="fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" title="Minimum number of numeric characters that must be used in a password."></i></label>
+									<input class="form-control" id="number" type="number" min="0" string-to-number ng-model="passwordRestriction.number">
+								</div>
+								<div class="form-group col-md-3">
+									<label for="special">Special <i class="fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" title="Minimum number of special characters that must be used in a password. Special characters are defined in the 'Allowed Special' field."></i></label>
+									<input class="form-control" id="special" type="number" min="0" string-to-number ng-model="passwordRestriction.special">
+								</div>
+							</div>
+							<div class="form-line">
+								<div class="form-group col-md-12">
+									<label for="allowed">Allowed Special <i class="fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" title="Specify the allowed special characters."></i></label>
+									<input class="form-control" id="allowed" type="text" ng-model="passwordRestriction.allowed">
+								</div>
+							</div>
+							<div class="form-line">
+								<div class="form-group col-md-4">
+									<label for="pwdMinLength">Min Length <i class="fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" title="Minimum number of characters that must be used in a password. If the value is 0, no minimum password length will be enforced."></i></label>
+									<input class="form-control" id="pwdMinLength" type="number" string-to-number ng-model="policy.pwdMinLength">
+									<div id="pwdMinLengthSlider"></div>
+								</div>
+								<div class="form-group col-md-4">
+									<div class="has-feedback">
+										<label for="pwdMaxLength">Max Length</label>
+										<input class="form-control" id="pwdMaxLength" type="number" string-to-number ng-model="policy.pwdMaxLength">
+										<span class="form-control-feedback">
+											<i class="fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" title="Maximum number of characters that must be used in a password. Max value of 128 charaters. If the value is 0, no maximum password length will be enforced."></i>
+										</span>
+									</div>
+									<div id="pwdMaxLengthSlider"></div>
+								</div>
+								<div class="form-group col-md-4">
+									<label for="pwdInHistory">History <i class="fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" title="Number of passwords that are maintained in a list of previously used passwords for the account."></i></label>
+									<input class="form-control" id="pwdInHistory" type="number" min="0" max="10" ng-model="policy.pwdInHistory">
+								</div>
+							</div>
+							<div class="form-line">
+								<div class="form-group col-md-4">
+									<label for="pwdMinAge">Min Age <i class="fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" title="Specifies the minimum time (in minutes) between password changes. Max value of Max value of 1440 minutes (24 hours)."></i></label>
+									<input class="form-control" id="pwdMinAge" type="number" min="0" max="1440" string-to-number ng-model="pwdMinAge">
+									<div id="pwdMinAgeSlider"></div>
+								</div>
+								<div class="form-group col-md-4">
+									<label for="pwdExpireWarning">Expire Warning <i class="fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" title="Specifies whether and when a warning message of password expiration will be returned on successful authentication. Max value of 365 days. If the value is 0, then no warnings will be given on successful authentication."></i></label>
+									<input class="form-control" id="pwdExpireWarning" type="number" string-to-number ng-model="pwdExpireWarning">
+									<div id="pwdExpireWarningSlider"></div>
+								</div>
+								<div class="form-group col-md-4">
+									<label for="pwdMaxAge">Max Age <i class="fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" title="Maximum time (in days) a password is valid, after which it is deemed to be no longer usable and any authentication attempts with the expired password will be treated as invalid. Max value of 365 days. If 0, never expires."></i></label>
+									<input class="form-control" id="pwdMaxAge" type="number" min="0" max="365" string-to-number ng-model="pwdMaxAge">
+									<div id="pwdMaxAgeSlider"></div>
+								</div>
+							</div>
+							<div class="form-line">
+								<div class="form-group col-md-4">
+									<label for="pwdGraceAuthNLimit">Grace Period <i class="fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" title="Number of times an expired password can be used to authenticate. If the value is 0, then any attempt to authenticate using an expired password will be rejected."></i></label>
+									<input class="form-control" id="pwdGraceAuthNLimit" type="number" min="0" string-to-number ng-model="policy.pwdGraceAuthNLimit">
+								</div>
+								<div class="form-group col-md-4">
+									<label for="pwdGraceExpire">Grace Expire <i class="fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" title="Time (in days) the grace authentications are valid. Max value of 365 days. If the value is 0, there is no time limit on the grace authentications."></i></label>
+									<input class="form-control" id="pwdGraceExpire" type="number" min="0" max="365" string-to-number ng-model="pwdGraceExpire">
+									<div id="pwdGraceExpireSlider"></div>
+								</div>
+							</div>
+							<div class="form-line">
+								<div class="form-group col-md-4">
+									<input class="form-control" id="pwdLockout" type="checkbox" ng-model="policy.pwdLockout">
+									<label for="pwdLockout">Lockout <i class="fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" title="Indicates, when checked, that the password may not be used to authenticate after a specified number of consecutive failed authentication attempts. The maximum number of consecutive failed authentication attempts is specified in Max Failure."></i></label>
+									
+								</div>
+								<div class="form-group col-md-4">
+									<input class="form-control" id="pwdMustChange" type="checkbox" ng-model="policy.pwdMustChange">
+									<label for="pwdMustChange">Must Change <i class="fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" title="Specifies whether users must change their passwords when after a password is set or reset by an administrator. If not checked, users are not required to change their password upon authenication after the administrator sets or resets the password."></i></label>
+								</div>
+							</div>
+							<div class="form-line">
+								<div class="form-group col-md-4">
+									<label for="pwdMaxIdle">Max Idle <i class="fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" title="Number of days an account may remain unused before it becomes locked. Max value of 365 days. (0 means infinite)"></i></label>
+									<input class="form-control" id="pwdMaxIdle" type="number" min="0" max="365" string-to-number ng-model="pwdMaxIdle">
+									<div id="pwdMaxIdleSlider"></div>
+								</div>
+								<div class="form-group col-md-4">
+									<label for="pwdLockoutDuration">Lockout Duration <i class="fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" title="Number of minutes that the password cannot be used to authenticate due to too many failed authentication attempts. Max value of 1440 minutes (24 hours). If the value is 0, the user will not be able to access the account until the account is unlocked by an administrator. When this period expires the account is automatically unlocked."></i></label>
+									<input class="form-control" id="pwdLockoutDuration" type="number" min="0" max="1440" string-to-number ng-model="pwdLockoutDuration">
+									<div id="pwdLockoutDurationSlider"></div>
+								</div>
+							</div>
+							<div class="form-line">
+								<div class="form-group col-md-4">
+									<label for="pwdMaxFailure">Max Failure <i class="fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" title="Number of consecutive failed authentication attempts after which the password may not be used to authenticate. If the value is 0, an unlimited number of consecutive password failure attempts are allowed. Any successful authentication resets the count."></i></label>
+									<input class="form-control" id="pwdMaxFailure" type="number" min="0" string-to-number ng-model="policy.pwdMaxFailure">
+								</div>
+								<div class="form-group col-md-4">
+									<label for="pwdFailureCountInterval">Failure Reset Count Interval <i class="fa fa-question-circle-o" aria-hidden="true" data-toggle="tooltip" title="Number of minutes after which the password failures are purged from the failure counter, even though no successful authentication occurred. Max value of 1440 minutes (24 hours). If this value is 0, the failure counter is only reset by a successful authentication."></i></label>
+									<input class="form-control" id="pwdFailureCountInterval" type="number" min="0" max="1440" string-to-number ng-model="pwdFailureCountInterval">
+									<div id="pwdFailureCountIntervalSlider"></div>
+								</div>
+							</div>
+						</form>
+					</div>
+					<div class="panel-footer">
+						<button ng-if="save" class="btn btn-primary" ng-click="save()">	<i class="fa fa-floppy-o fa-lg" aria-hidden="true"></i> Save</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

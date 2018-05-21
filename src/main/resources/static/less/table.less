@@ -1,0 +1,213 @@
+@import (reference) 'bootstrap\bootstrap.less';
+@import (reference) 'bootstrap\utilities.less';
+@import 'variables';
+@import 'mixins';
+
+.table {
+	.table;
+	margin-bottom: 0;
+	box-shadow: 0px 1px 1px #ccc;
+	border-top: none;
+	thead > tr > th, tbody > tr > th {
+		font-size: 12px;
+		font-weight: @semibold;
+		vertical-align: middle;
+	}
+	
+	& > thead > tr > td, & > thead > tr > th  {
+		vertical-align: bottom;
+		border-bottom: 2px solid #dddddd;
+	}
+	
+	& > tbody > tr > td, & > tbody > tr > th,
+	& > tfoot > tr > td, & > tfoot > tr > th{
+		font-size: 12px;
+		border: none;
+		& > input {
+			width: 100%;
+		}
+	}
+}
+
+.table-hover {
+	.table-hover;
+	tbody > tr:hover {
+		background-color: #d9f0ea !important;
+	}
+	/* 	
+	tbody.body-highlight {
+		tr > th {
+			font-weight: @semibold;
+			vertical-align: middle;
+			border: 0;
+			background-color: inherit;
+		}
+		
+		&:nth-of-type(odd) {
+			background-color: #f9f9f9;
+		}
+		&:hover {
+			background-color: #d9f0ea;
+		}
+	} */
+}
+
+.table-body-striped {
+	& > tbody {
+		display: table-row-group;
+		&:nth-of-type(odd) {
+			background-color: #f9f9f9;
+		}
+	}
+}
+
+.table-body-hover {
+	& > tbody {
+		display: table-row-group;
+		&:hover {
+			background-color: #d9f0ea !important;
+		}
+	}
+}
+
+.easeInOut {
+	-webkit-animation: easeInOut 5s ease-out infinite normal;
+	-moz-animation: easeInOut 5s ease-out infinite normal;
+	-o-animation: easeInOut 5s ease-out infinite normal;
+	animation: easeInOut 5s ease-out infinite normal;
+}
+
+@-webkit-keyframes easeInOut {
+	0%   { background-color: #dff0d8; }
+	25% { background-color: initial; }
+	50% { background-color: #dff0d8; }
+	75% { background-color: initial; }
+	100% { background-color: #dff0d8; }
+}
+@-moz-keyframes easeInOut {
+	0%   { background-color: #dff0d8; }
+	25% { background-color: initial; }
+	50% { background-color: #dff0d8; }
+	75% { background-color: initial; }
+	100% { background-color: #dff0d8; }
+}
+@-o-keyframes easeInOut {
+	0%   { background-color: #dff0d8; }
+	25% { background-color: initial; }
+	50% { background-color: #dff0d8; }
+	75% { background-color: initial; }
+	100% { background-color: #dff0d8; }
+}
+@keyframes easeInOut {
+	0%   { background-color: #dff0d8; }
+	25% { background-color: initial; }
+	50% { background-color: #dff0d8; }
+	75% { background-color: initial; }
+	100% { background-color: #dff0d8; }
+}
+
+.table-responsive {
+	.table-responsive;
+	width: 100%; 
+	overflow-x: scroll;
+    overflow-y: hidden;
+	border-top: none;
+	border-collapse: inherit;
+	-webkit-overflow-scrolling: touch;
+}
+
+.table-striped {
+	.table-striped;
+	tbody:nth-of-type(even){
+		& > tr:nth-of-type(odd) {
+			background-color: @hli-white;
+		}
+		
+		& > tr:nth-of-type(even) {
+			background-color: #f9f9f9;
+		}
+	}
+}
+
+.row-striped {
+	background-color: @hli-white;
+	& > th, & > td {
+		border: none !important;
+	}
+	
+	&:nth-of-type(odd) {
+		background-color: #f9f9f9;
+	}
+}
+
+td.action {
+	min-width: 100px;
+	width: 100px;
+}
+
+.expand {
+	max-width: 5px;
+    width: 5px;
+    min-width: 5px;
+	vertical-align: top !important;
+	cursor: pointer;
+}
+
+td.btn-toggle {
+	padding: 5px !important;
+	text-align: center !important;
+	vertical-align: middle !important;
+	width: 20px !important;
+	color: @hli-white;
+	border-radius: 4px 0 0 4px;
+	cursor: pointer;
+	
+	&.primary {
+		background-color: @hli-med-green;
+		border-color: @hli-dark-green;
+		
+		&:hover, &:focus, &:active,
+		&:active:hover, &:active:focus {
+			background-color: @hli-dark-green;
+			border-color: @hli-dark-green;
+		}
+	}
+	
+	&.danger {
+		background-color: #f2dede;
+		border-color: #d43f3a;
+		
+		&:hover, &:focus, &:active,
+		&:active:hover, &:active:focus {
+			background-color: #c9302c;
+			border-color: #ac2925;
+		}
+	}
+}
+
+table.chart-table {
+	margin: 0;
+	width: 100%;
+    max-width: 100%;
+	border-collapse: collapse;
+    border-spacing: 0;
+	thead { background-color: #e1e2e7; }
+}
+
+.sortRow {
+	cursor: pointer;
+	white-space: nowrap;
+	min-width: 10px;
+	max-width: 200px;
+	&:hover { background: #eeeeee; }
+	
+	& > .fa {
+		float: right;
+		/*position: relative;*/
+		/*right: 0px;*/
+		/*margin-left: 10px;*/
+		/*vertical-align: middle;*/
+		line-height: 15px;
+		width: 8px;
+	}
+}

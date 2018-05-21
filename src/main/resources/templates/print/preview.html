@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="stella">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="layout" content="main"/>
+		<link rel="stylesheet" type="text/css" href="/css/print.css" />
+		<script type="text/javascript" src="/js/main/controllers/PrintController.js"></script>
+	</head>
+	<body layout:fragment="content">
+		<script>
+			$('#bookin-menu').addClass("active");
+			$('#bookin-grid-link').addClass("active");
+		</script>
+		<div ng-cloak ng-controller="PrintCtrl" style="width: 100%; background-color: white; padding: 50px 20px;">
+			<a href="${createLink(uri: '/')}"><i class="fa fa-angle-left" aria-hidden="true"></i> Bookin Management</a>
+			<a class="pull-right" ng-click="print()"><i class="fa fa-print" aria-hidden="true"></i> Print</a>
+			<br>
+			<select ng-model="format" ng-options="format.name for format in formats | orderBy: ['name']">
+				<option value="">Select Format</option>
+			</select>
+			<hr>
+			<div class="print" ng-if="format">
+				<div style="position: relative;">
+					<img id="tableLogo" ng-if="format.logo.id" ng-src="${createLink(uri: '/asset/image/')}{{format.logo.id}}" style="width: 150px; height: 150px;">
+					<h3 ng-style="format.logo.id ? { position: 'absolute', top: '30%', left: '0' } : { height: '30px' }" style="text-align: center; width: 100%;">{{format.title}}</h3>
+				</div>
+				<div ng-if="format.showTopDate">{{format.dateLabel}} {{date | date: format.dateFormat}}</div>
+				<div ng-if="format.showTopCount">{{format.countLabel}} {{queueEntries.length}}</div>
+				<table id="print-table" class="table table-striped table-hover">
+					<thead>
+						<tr>
+							<th ng-repeat="header in format.header.columns | orderBy:'index' track by $index" colspan="{{header.colspan}}">
+								<span style="display: inline-block;">{{header.name}}</span>
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat-start="queueEntry in queueEntries | orderBy:format.sort">
+							<td ng-repeat="column in format.header.columns | orderBy:'index' track by $index" colspan="{{column.colspan}}" rowspan="{{column.rowspan}}">
+								{{column.parentKey ?
+									(column.format && column.type == 'Date') ? (queueEntry[column.parentKey][column.key] | date: column.format) :
+										column.type == 'Boolean' ? (queueEntry[column.parentKey][column.key] | yesNo) : queueEntry[column.parentKey][column.key]
+								: (column.format && column.type == 'Date') ? (queueEntry[column.key] | date: column.format) :
+										column.type == 'Boolean' ? (queueEntry[column.key] | yesNo) : queueEntry[column.key]}}
+							</td>
+						</tr>
+						<tr style="{{$last ? 'border-bottom: 2px solid #dddddd;' : ''}}" ng-repeat="row in format.rows | orderBy:'index' track by $index" ng-repeat-end>
+							<th ng-repeat-start="column in row.columns | orderBy:'index' track by $index" colspan="{{column.colspan}}" rowspan="{{column.rowspan}}" ng-if="column.isHeader">
+								{{column.name}}
+							</th>
+							<td colspan="{{column.colspan}}" rowspan="{{column.rowspan}}"  ng-if="!column.isHeader" ng-repeat-end>
+								{{column.parentKey ?
+									(column.format && column.type == 'Date') ? (queueEntry[column.parentKey][column.key] | date: column.format) :
+										column.type == 'Boolean' ? (queueEntry[column.parentKey][column.key] | yesNo) : queueEntry[column.parentKey][column.key]
+								: (column.format && column.type == 'Date') ? (queueEntry[column.key] | date: column.format) :
+										column.type == 'Boolean' ? (queueEntry[column.key] | yesNo) : queueEntry[column.key]}}
+							</td>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr ng-repeat="footer in format.footers | orderBy:'index' track by $index">
+							<td style="font-weight: bold; border-top: 2px solid #dddddd; border-bottom: 2px solid #dddddd;" ng-repeat="column in footer.columns | orderBy:'index' track by $index" colspan="{{column.colspan}}" rowspan="{{column.rowspan}}">
+								<span style="display: inline-block;">{{column.name}}</span>
+							</td>
+						</tr>
+					</tfoot>
+				</table>
+				<div ng-if="format.showBottomDate">{{format.dateLabel}} {{date | date: format.dateFormat}}</div>
+				<div ng-if="format.showBottomCount">{{format.countLabel}} {{queueEntries.length}}</div>
+			</div>
+		</div>
+	</body>
+</html>

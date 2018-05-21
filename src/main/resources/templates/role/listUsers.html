@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="layout" content="main">
+		<title>List Role Users</title>
+		<script type="text/javascript" src="/js/main/controllers/RoleController.js"></script>
+	</head>
+	<body layout:fragment="content">
+		<script>
+			$('#admin-menu').addClass("active");
+			$('#role-link').addClass("active");
+		</script>
+		<header class="main-heading">
+			<div class="masthead">
+				<div class="masthead-heading">
+					<div class="masthead-title">Assign Users</div>
+				</div>
+			</div>
+		</header>
+		<div class="main-content">
+			<div class="container-fluid p-t-50">
+				<div class="panel panel-primary" ng-controller="ListUserRoleCtrl">
+					<div class="panel-heading">
+						<div class="panel-title">{{role.name}}</div>
+					</div>
+					<div class="panel-body">
+						<dual-list-box
+							target="users"
+							options="avalibleUsers"
+							display-key="'username'"
+							target-label="'Assigned'"
+							options-label="'Unassigned'"></dual-list-box>
+					</div>
+					<div class="panel-footer">
+						<button class="btn btn-primary" ng-click="save()"><i class="fa fa-floppy-o fa-lg" aria-hidden="true"></i> Save</button>
+						<a class="text-danger" ng-click="cancel()"> Cancel</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

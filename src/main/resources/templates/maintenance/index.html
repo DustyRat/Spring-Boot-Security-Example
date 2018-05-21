@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="layout" content="main">
+		<title>Maintenance</title>
+		<script type="text/javascript" src="/js/main/SortControls.js"></script>
+		<script type="text/javascript" src="/js/main/controllers/MaintenanceController.js"></script>
+	</head>
+	<body layout:fragment="content">
+		<script>
+			$('#client-menu').addClass("active");
+			$('#maintenance-link').addClass("active");
+		</script>
+		<div class="main-content" ng-controller="MaintenanceCtrl">
+			<div class="container-fluid p-t-50">
+				<div class="panel panel-primary" ng-controller="SortCtrl" ng-init="defaultSort='clients.length';defaultReverse=false;itemsPerPage=10;">
+					<div class="panel-body" ng-show="counts.length > 0">
+						<span ng-if="end > 0">Displaying {{begin + 1}} - {{end}} of {{totalItems}}</span>
+						<a class="filter-reset pull-right" ng-click="reset()">Reset Filter</a><br>
+						<form class="filter-bar">
+							<i class="filter-icon fa fa-filter" aria-hidden="true"></i>
+							<input type="text" class="filter-search" placeholder="Filter" ng-model="options[$id].filters.$" ng-model-options="{updateOn: 'default blur', debounce: {'default': 700, 'blur': 0}}">
+						</form>
+					</div>
+					<div class="panel-body" style="text-align: center;" ng-show="!(data.length > 0)">
+						<span class="text-danger">No Results</span>
+					</div>
+					<div class="panel-table-body">
+						<table class="table table-body-striped table-hover" ng-show="data.length > 0">
+							<thead>
+								<tr>
+									<th class="sortRow" ng-click="changeSort('ssn')"><i class="{{sorted('ssn') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>SSN</th>
+									<th class="sortRow" ng-click="changeSort('clients.length')"><i class="{{sorted('clients.length') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Clients</th>
+								</tr>
+							</thead>
+							<tbody ng-repeat="item in data | orderBy:sortType:sortReverse | startFrom:(page-1)*itemsPerPage | limitTo:itemsPerPage track by item.ssn">
+								<tr>
+									<td>{{item.ssn}}</td>
+									<td style="padding: 0;">
+										<table class="table table-body-striped table-body-hover" style="margin: 0;">
+											<thead>
+												<tr>
+													<th style="width: 10px;">Master</th>
+													<th style="width: 15%;">Source</th>
+													<th style="width: 15%;">Number</th>
+													<th style="width: 15%;">SID</th>
+													<th style="width: 15%;">Bookin</th>
+													<th style="width: 15%;">Time</th>
+													<th style="width: 15%;">DOB</th>
+													<th style="width: 15%;">Ethnicity</th>
+													<th style="width: 15%;">Gender</th>
+													<th style="width: 10px;">Merge</th>
+												</tr>
+											</thead>
+											<tbody ng-repeat="client in item.clients | orderBy:['name', 'source', 'number'] track by client.id">
+												<tr>
+													<td rowspan="2">
+														<input type="radio" id="radio-{{client.id}}" name="{{item.ssn}}" ng-value="{{client}}" ng-model="item.master" ng-change="uncheck(item.merge, $index)">
+														<label for="radio-{{client.id}}"></label>
+													</td>
+													<td colspan="8">{{client.name}}</td>
+													<td rowspan="2">
+														<input type="checkbox" id="checkbox-{{client.id}}" name="{{item.ssn}}" ng-value="{{client}}" ng-model="item.merge[$index]" ng-true-value="{{client}}" ng-disabled="client.id == item.master.id">
+														<label for="checkbox-{{client.id}}"></label>
+													</td>
+												</tr>
+												<tr>
+													<td>{{client.source}}</td>
+													<td>{{client.number}}</td>
+													<td>{{client.bookin.sid}}</td>
+													<td>{{client.bookin.number}}</td>
+													<td>{{client.bookin.time | date: 'MM/dd/yyyy h:mm a'}}</td>
+													<td>{{client.dob | date: 'MM/dd/yyyy' }}</td>
+													<td>{{client.ethnicity}}</td>
+													<td>{{client.gender}}</td>
+												</tr>
+											</tbody>
+										</table>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2">
+										<button class="btn" ng-click="resetMatch(item)" data-toggle="tooltip" title="Clear all selections for the above SSN."><i class="fa fa-undo" aria-hidden="true"></i> Reset</button>
+										<button class="btn btn-success" ng-click="confirm(counts, item)" ng-disabled="!item.master || !item.merge" data-toggle="tooltip" title="Selected Merge records will be merged with selected Master Record."><i class="fa fa-check-circle" aria-hidden="true"></i> Confirm</button>
+										<button class="btn btn-danger" style="float: right;" ng-click="ignore(counts, item)" data-toggle="tooltip" title="Clear matches on 'ALL' records shown for the above SSN."><i class="fa fa-minus-circle" aria-hidden="true"></i> Ignore</button>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div style="margin: 0 auto; width: 40%; min-width: 247px;">
+						<uib-pagination
+							ng-hide="hide"
+							class="pagination-sm"
+							boundary-links="true"
+							boundary-link-numbers="false"
+							direction-links="true"
+							force-ellipses="false"
+							items-per-page="itemsPerPage"
+							max-size="5"
+							ng-disabled="false"
+							ng-model="page"
+							rotate="true"
+							total-items="totalItems"
+							first-text="&laquo;"
+							previous-text="&lsaquo;"
+							next-text="&rsaquo;"
+							last-text="&raquo;"></uib-pagination>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

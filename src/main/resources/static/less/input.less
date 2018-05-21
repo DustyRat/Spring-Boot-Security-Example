@@ -1,0 +1,268 @@
+@import (reference) 'bootstrap\bootstrap.less';
+@import (reference) 'font-awesome\font-awesome.less';
+@import 'variables';
+@import 'mixins';
+
+.login-block {
+	width: 470px;
+	height: 336px;
+	margin-top: 100px;
+	padding-top: 18px;
+	.center-block;
+	background-color: @hli-white;
+	border: 1px solid @border-gray;
+	border-radius: 10px;
+	z-index: 30;
+	text-align: center;
+	
+	input, button {
+		width: inherit;
+		margin: 10px 0;
+	}
+}
+
+.login-error {
+	.text-center;
+	.text-danger;
+}
+
+input:not([type=checkbox]):not([type=radio]), textarea, select {
+	color: black;
+	vertical-align: middle;
+	border: 1px solid @border-dark-gray;
+	border-radius: 4px;
+	box-shadow: 0 0 5px rgba(0,0,0,0.15);
+	padding: 5px 20px 5px 10px;
+	
+	&:focus {
+		outline: none;
+		border-color: @hli-med-green;
+	}
+
+	&:hover,
+	&:active {
+		border-color: @hli-med-green;
+	}
+}
+
+input:not([type=checkbox]):not([type=radio]).simple {
+	width: 100px;
+    padding: 5px 10px;
+}
+
+input[type=checkbox] {
+	display: none !important;
+	& + label {
+		font-weight: normal;
+		cursor: pointer;
+	}
+	
+	& + label:before {
+		font-family: FontAwesome;
+		display: inline-block;
+		content: @fa-var-square-o"\00a0";
+	}
+	
+	&:checked + label:before {
+		content: @fa-var-check-square-o"\00a0";
+	}
+	
+	&:disabled + label {
+		color: gray;
+		cursor: not-allowed;
+	}
+}
+
+input[type=radio] {
+	display:none;
+	& + label {
+		font-weight: normal;
+		cursor: pointer;
+	}
+	
+	& + label:before {
+		font-family: FontAwesome;
+		display: inline-block;
+		content: @fa-var-circle-o"\00a0";
+	}
+	
+	&:checked + label:before {
+		content: @fa-var-circle"\00a0";
+	}
+}
+
+.ui-datepicker select.ui-datepicker-month, .ui-datepicker select.ui-datepicker-year {
+    padding: 0;
+}
+
+.form-control {
+	.form-control;
+	height: auto;
+}
+
+form {
+	display: block;
+	.form-line {
+		display: inline-block;
+		width: 100%;
+		padding-bottom: 15px;
+	}
+}
+
+form.inline {
+	display: inline;
+	input, select {
+		width: inherit;
+	}
+}
+
+fieldset {
+    border: 0 !important;
+	padding: 10px;
+}
+
+textarea.form-control {
+    height: auto;
+    border: 1px solid @hli-med-green;
+}
+
+.btn {
+	.btn;
+    color: @hli-med-green;
+    background-color: @hli-white;
+    border-color: @hli-dark-green;
+	padding: 3px 12px;
+	&:hover, &:focus, &:active,
+	&:active:hover, &:active:focus {
+		color: @hli-med-green;
+		background-color: @hli-light-gray;
+		border-color: @hli-dark-green;
+	}
+	
+	&:focus,
+	&:active:focus,
+	&.active:focus,
+	&.focus,
+	&:active.focus,
+	&.active.focus {
+		outline: 5px auto @hli-dark-green;
+	}
+}
+
+.btn-primary {
+	.btn-primary;
+    color: @hli-white;
+    background-color: @hli-med-green;
+    border-color: @hli-dark-green;
+	&:hover, &:focus, &:active,
+	&:active:hover, &:active:focus {
+		color: @hli-white;
+		background-color: @hli-dark-green;
+		border-color: @hli-dark-green;
+	}
+	&.disabled:hover, &[disabled]:hover{
+		background-color: @hli-med-green;
+		border-color: @hli-dark-green;
+	}
+}
+
+.btn-success {
+	.btn-success;
+}
+
+.btn-warning {
+	.btn-warning;
+}
+
+.btn-danger {
+    .btn-danger;
+	&:hover, &:focus, &:active,
+	&:active:hover, &:active:focus {
+		color: #fff;
+		background-color: #ac2925;
+		border-color: #761c19;
+	}
+}
+
+.btn-cancel {
+    color: white;
+	background-color: #ccc;
+    border-color: #999;
+	
+	&:hover, &:focus, &:active,
+	&:active:hover, &:active:focus {
+		color: white;
+		background-color: #999;
+		border-color: #999;
+	}
+	
+	&:focus,
+	&:active:focus,
+	&.active:focus,
+	&.focus,
+	&:active.focus,
+	&.active.focus {
+		outline: 5px auto #999;
+	}
+}
+
+.btn-xs {
+    .btn-xs;
+}
+
+.btn-fill {
+	display: inline-block;
+    width: 100%;
+}
+
+.btn-dropdown {
+	font-size: 16px;
+	margin: 5px;
+}
+
+.selectYear {
+	&, &:hover, &:active, &:focus,
+	&:active:hover {
+		background-color: @hli-white;
+		color: black;
+		font-size: 15px;
+		font-weight: normal;
+		padding-right: 100px;
+		border: 1px solid #0ea783;
+		border-radius: 4px;
+	}
+}
+
+.btn-start-activity {
+	font-size: 24px;
+    font-weight: @semibold;
+}
+
+form.bookin-search {
+	display: table;
+	font-size: 14px;
+	
+	& > input {
+		padding: 6px 12px;
+		background-image: none;
+		border-bottom-left-radius: 4px !important;
+		border-top-left-radius: 4px !important;
+		border-bottom-right-radius: 0px !important;
+		border-top-right-radius: 0px !important;
+		box-shadow: none !important;
+	}
+	
+	& > button {
+		height: 28px;
+		font-weight: normal;
+		text-align: center;
+		border-bottom-left-radius: 0px !important;
+		border-top-left-radius: 0px !important;
+		border-bottom-right-radius: 4px !important;
+		border-top-right-radius: 4px !important;
+	}
+	
+	& > input, & > button {
+		display: table-cell;
+	}
+}

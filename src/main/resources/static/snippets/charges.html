@@ -1,0 +1,36 @@
+<div class="tab-pane" ng-show="tabCtrl.isSet(1)">
+	<div class="panel-body" style="text-align: center;" ng-hide="queueEntry.bookin.charges.length > 0">
+		<span class="text-danger">No Charges</span>
+	</div>
+	<table class="table table-striped" ng-if="queueEntry.bookin.charges.length > 0">
+		<tbody ng-repeat="charge in queueEntry.bookin.charges | orderBy:'isPrimary':true track by $index" >
+	  		<tr>
+	  			<th width="150px">Charge Description:</th>
+	  			<td>{{charge.description}}</td>
+			</tr>
+			<tr ng-if="charge.isPrimary">
+				<th>Primary Charge</th>
+				<td class="warning">PRIMARY</td>
+			</tr>
+			<tr>
+				<th>Charge Type</th>
+				<td>{{charge.type}}</td>
+			</tr>
+			<tr>
+				<th>Probation Violation:</th>
+				<td>{{charge.paroleViolation}}</td>
+			</tr>
+			<tr>
+				<th>Attorney</th>
+				<td>{{charge.attorney}}</td>
+			</tr>
+			<tr>
+				<th>Court</th>
+				<td>{{charge.court}}</td></tr>
+			<tr>
+				<th>Court Date</th>
+				<td>{{charge.date | date : 'MM/dd/yyyy'}}</td>
+			</tr>
+		</tbody>
+	</table>
+</div>

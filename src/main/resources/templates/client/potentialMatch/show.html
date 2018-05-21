@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="layout" content="main">
+		<title>Client Potential Match</title>
+		<script type="text/javascript" src="/js/main/SortControls.js"></script>
+		<script type="text/javascript" src="/js/main/controllers/PotentialMatchController.js"></script>
+	</head>
+	<body layout:fragment="content">
+		<script>
+			$('#client-menu').addClass("active");
+			$('#client-potential-match-link').addClass("active");
+		</script>
+		<div ng-controller="ClientPotentialMatchShowCtrl">
+			<header class="main-heading">
+				<div class="masthead">
+					<div class="masthead-heading">
+						<a href="${createLink(uri: '/client/potentialMatch/list')}"><i class="fa fa-angle-left" aria-hidden="true"></i> Potential Match List</a>
+						<div class="masthead-title">Bookin #{{bookin.number}}</div>
+					</div>
+				</div>
+			</header>
+			<div class="main-content">
+				<div class="container-fluid p-t-50">
+					<div class="panel panel-primary" ng-controller="SortCtrl" ng-init="defaultSort='rank';rememberSort=true;itemsPerPage=25;">
+						<div class="panel-heading">
+							<h3 class="panel-title">Potential Matches</h3>
+						</div>
+						<div class="panel-body">
+							<a class="filter-reset pull-right" ng-click="reset()">Reset Filter</a><br>
+							<form class="filter-bar">
+								<i class="filter-icon fa fa-filter" aria-hidden="true"></i>
+								<input type="text" class="filter-search" placeholder="Filter" ng-model="options[$id].filters.$" ng-model-options="{updateOn: 'default blur', debounce: {'default': 700, 'blur': 0}}">
+							</form>
+							<span ng-if="end > 0">Displaying {{begin + 1}} - {{end}} of {{totalItems}} Matches</span>
+						</div>
+						<table class="table table-striped table-hover">
+							<thead>
+								<tr>
+									<th width="150px"></th>
+									<th class="sortRow" ng-click="changeSort('name')"><i class="{{sorted('name') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Name</th>
+									<th class="sortRow" style="width: 100px;" ng-click="changeSort('ssn')"><i class="{{sorted('ssn') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>SSN</th>
+									<th class="sortRow" ng-click="changeSort('dob')"><i class="{{sorted('dob') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>DOB</th>
+									<th class="sortRow" ng-click="changeSort('ethnicity')"><i class="{{sorted('ethnicity') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Ethnicity</th>
+									<th class="sortRow" ng-click="changeSort('gender')"><i class="{{sorted('gender') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Gender</th>
+									<th class="sortRow" ng-click="changeSort('source')"><i class="{{sorted('source') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Source</th>
+									<th class="sortRow" ng-click="changeSort('number')"><i class="{{sorted('number') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Number</th>
+									<th class="sortRow" ng-click="changeSort('rank')"><i class="{{sorted('rank') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Rank</th>
+								</tr>
+							</thead>
+							<thead>
+								<tr class="static">
+									<td>Bookin <strong>{{bookin.number}}</strong></td>
+									<td>{{bookin.name | capitalize}}</td>
+									<td>{{bookin.ssn}}</td>
+									<td>{{bookin.dob | date: 'MM/dd/yyyy'}}</td>
+									<td>{{bookin.ethnicity}}</td>
+									<td>{{bookin.gender}}</td>
+									<td>{{bookin.source}}</td>
+									<td>{{bookin.number}}</td>
+									<td></td>
+								</tr>
+							</thead>
+							<tbody ng-show="candidates.length > 0">
+								<tr ng-repeat="candidate in data | orderBy:sortType:sortReverse | startFrom:(page-1)*itemsPerPage | limitTo:itemsPerPage track by $index">
+									<td class="action"><button class="btn btn-primary btn-sm" ng-click="match(candidate)"><i class="fa fa-check-square-o" aria-hidden="true"></i> Match</button></td>
+									<td>{{candidate.name | capitalize}}</td>
+									<td>{{candidate.ssn}}</td>
+									<td>{{candidate.dob | date: 'MM/dd/yyyy'}}</td>
+									<td>{{candidate.ethnicity}}</td>
+									<td>{{candidate.gender}}</td>
+									<td>{{candidate.source}}</td>
+									<td>{{candidate.number}}</td>
+									<td>{{candidate.rank}}</td>
+								</tr>
+							</tbody>
+						</table>
+						<div class="panel-body" style="text-align: center;" ng-hide="candidates.length > 0">
+							<span><label style="color:red;">No Potential Matches Found</label></span>
+						</div>
+						<div class="text-center">
+							<uib-pagination
+								ng-hide="hide"
+								class="pagination-sm"
+								boundary-links="true"
+								boundary-link-numbers="false"
+								direction-links="true"
+								force-ellipses="false"
+								items-per-page="itemsPerPage"
+								max-size="5"
+								ng-disabled="false"
+								ng-model="currentPage"
+								rotate="true"
+								total-items="totalItems"
+								first-text="&laquo;"
+								previous-text="&lsaquo;"
+								next-text="&rsaquo;"
+								last-text="&raquo;"></uib-pagination>
+						</div>
+						<div class="panel-footer" ng-show="candidates.length > 0">
+							<button class="btn btn-danger" ng-click="noMatches()">
+								<i class="fa fa-ban" aria-hidden="true"></i> No Matches
+							</button>
+						</div>
+					</div>
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							<div class="panel-title">Charges</div>
+						</div>
+						<table class="table table-striped table-hover">
+							<thead>
+								<tr>
+									<th width="10%">Primary</th>
+									<th width="10%">Type</th>
+									<th width="10%">Probation Violation</th>
+									<th width="30%">Description</th>
+									<th width="20%">Attorney</th>
+									<th width="20%">Court</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr class="{{charge.isPrimary ? 'warning' : ''}}" ng-repeat="charge in bookin.charges | orderBy:['isPrimary']:true">
+									<td><span ng-if="charge.isPrimary">PRIMARY</span></td>
+									<td>{{charge.type}}</td>
+									<td>{{charge.parole}}</td>
+									<td>{{charge.description}}</td>
+									<td>{{charge.attorney}}</td>
+									<td>{{charge.court}}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+							<div class="panel-title">History</div>
+						</div>
+						<div class="panel-table-body">
+							<table class="table table-body-striped table-body-hover">
+								<tbody ng-repeat="history in potentialMatch.history | orderBy:['dateCreated']:true track by $index">
+									<tr>
+										<th class="uppercase">{{history.username}}</th>
+										<td class="pull-right">{{history.dateCreated | date : 'MMMM dd, yyyy h:mma' }}</td>
+									</tr>
+									<tr><td colspan="2">{{history.details}}</td></tr>
+									<tr ng-if="history.errorMessage"><td colspan="2">{{history.errorMessage}}</td></tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

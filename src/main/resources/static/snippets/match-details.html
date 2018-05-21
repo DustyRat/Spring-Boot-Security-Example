@@ -1,0 +1,23 @@
+<div class="tab-pane" ng-show="tabCtrl.isSet(1)">
+	<table class="table table-striped">
+		<tbody>
+			<tr><th style="width: 195px;">SID</th><td>{{queueEntry.bookin.sid}}</td></tr>
+			<tr><th>Number</th><td>{{queueEntry.bookin.number}}</td></tr>
+			<tr><th>Date</th><td>{{queueEntry.bookin.date | date: 'MM/dd/yyyy h:mma'}}</td></tr>
+			<tr><th>Jail Location</th><td>{{queueEntry.bookin.jailCode}} {{queueEntry.bookin.tankCode}}</td></tr>
+			<tr><th>Felony</th><td>{{queueEntry.bookin.felony | capitalize}}</td></tr>
+			<tr><th>Probation / Parole</th><td>{{queueEntry.bookin.hasParoleViolation}}</td></tr>
+			<tr><th>Status</th><td>{{queueEntry.status}}</td></tr>
+			<tr><th>Released</th><td>{{queueEntry.bookin.releasedDate | date : "MMM dd, yyyy"}}</td></tr>
+			<tr><th>Length of Stay</th><td>{{queueEntry.lengthOfStay}} days</td></tr>
+			<tr><th>Prior Bookins - 12 Months</th><td>{{queueEntry.pastYearCount}}</td></tr>
+			<tr><th>Prior Bookins - This Year</th><td>{{queueEntry.thisYearCount}}</td></tr>
+			<tr><th>Last Updated</th><td>{{queueEntry.bookin.lastUpdated | date : "MMMM dd, yyyy h:mma"}}</td></tr>
+	 		<tr><th>Last Status Change</th><td>{{queueEntry.statusUpdated | date : "MMMM dd, yyyy h:mma"}}</td></tr>
+	 		<tr ng-show="navCtrl.isPermitted('viewnotes')">
+	 			<th>Last Note</th>
+	 			<td><span ng-show="queueEntry.notes[0].body" class="ng-hide"><i>{{queueEntry.notes[0].body.length > 100 ? queueEntry.notes[0].body.substring(0, 100) + '...' : queueEntry.notes[0].body}}</i> -- {{queueEntry.notes[0].dateCreated | date : "MMMM dd, yyyy h:mma"}} by {{queueEntry.notes[0].author}}</span></td>
+	 		</tr>
+		</tbody>
+	</table>
+</div>

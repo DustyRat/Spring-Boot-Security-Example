@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="layout" content="main">
+		<script type="text/javascript" src="${resource(dir: 'js/exhibit3', file: 'exhibit-api.js')}?autoCreate=false"></script>
+		<script type="text/javascript" src="${resource(dir: 'js/exhibit3/extensions/time/', file: 'time-extension.js')}"></script>
+		<link rel="stylesheet" type="text/css" href="/css/timeline.css">
+		<script type="text/javascript" src="/js/timeline.js"></script>
+		<script type="text/javascript" src="/js/main/ng-timeline.js"></script>
+		<script type="text/javascript" src="/js/main/SortControls.js"></script>
+		<script type="text/javascript" src="/js/main/controllers/QueueEntryController.js"></script>
+		<style>
+			.tl-slide-scrollable-container, .tl-slide-content { width: 100% !important }
+		</style>
+	</head>
+	<body layout:fragment="content">
+		<script>
+			$('#bookin-menu').addClass("active");
+			$('#bookin-grid-link').addClass("active");
+		</script>
+		<div ng-controller="QueueEntryShowCtrl">
+			<div ng-controller="TabController as pageCtrl" ng-init="pageCtrl.setTab(1);">
+				<header class="main-heading">
+					<div class="masthead">
+						<div class="masthead-heading">
+							<a href="${createLink(uri: '/')}"><i class="fa fa-angle-left" aria-hidden="true"></i> Bookin Management</a>
+							<shiro:isPermittedAny permissions="actionchangestatus, actionreturntocsp">
+							<ul class="change-status pull-right">
+								<shiro:isPermitted permission="actionchangestatus">
+								<li class="dropdown">
+									Client Status: <button class="btn dropdown-toggle" data-toggle="dropdown">{{queueEntry.status}}<i class="fa fa-angle-down" aria-hidden="true"></i></button>
+									<ul class="dropdown-menu">
+										<li ng-repeat="status in statuses | filter:{'isEnabled': true} track by status.name">
+											<a ng-click="changeStatus(status)">
+												<i class="{{queueEntry.status != status.name ? 'fa fa-circle-thin fa-fw': 'fa fa-circle fa-fw'}}"></i> {{status.name}}
+											</a>
+										</li>
+									</ul>
+								</li>
+								</shiro:isPermitted>
+								<shiro:isPermitted permission="actionreturntocsp">
+								<li style="float: right;"><a ng-click="changeStatus(CSPReturned)">Return to CSP</a></li>
+								</shiro:isPermitted>
+							</ul>
+							</shiro:isPermittedAny>
+							<div class="masthead-title"> {{queueEntry.client.name | capitalize}}</div>
+							<shiro:isPermittedAll permissions="actioncreatenote, viewnotes">
+							<button class="btn btn-primary" ng-click="navCtrl.clickNewNote()"><i class="fa fa-pencil-square" aria-hidden="true"></i> New Note</button>
+							</shiro:isPermittedAll>
+							<shiro:isPermitted permission="actionupdatematch">
+							<button class="btn btn-danger" ng-click="unmatch()">Rematch/Unmatch</button>
+							</shiro:isPermitted>
+						</div>
+						<div class="tab-container">
+							<ul class="tabs">
+								<li class="tab" ng-class="{active:pageCtrl.isSet(1)}" ng-click="pageCtrl.setTab(1); "><a>Details</a></li>
+								<!--<li class="tab" ng-class="{active:pageCtrl.isSet(2)}" ng-click="pageCtrl.setTab(2); loadTimeLine();" ng-show="navCtrl.isPermitted('viewtimeline')"><a>Time Line</a></li>-->
+								<li class="tab" ng-class="{active:pageCtrl.isSet(3)}" ng-click="pageCtrl.setTab(3);" ng-show="navCtrl.isPermitted('viewtimeline')"><a>Time Line</a></li>
+							</ul>
+						</div>
+					</div>
+				</header>
+				<div class="main-content" ng-show="pageCtrl.isSet(1)">
+					<div class="container-fluid p-t-50">
+						<client-view></client-view>
+					</div>
+				</div>
+				<div ng-show="pageCtrl.isSet(3)" ng-controller="SortCtrl" ng-init="dataKey='timeline';update=updateTimeLine;pageCtrl.registerCallback(3, showTimeLine);">
+					<header class="main-heading">
+						<div class="panel panel-filter">
+							<div class="panel-heading">
+								<div class="panel-title">
+									<a ng-collapse="#timelineFacets:false">
+										<i class="{{display ? 'fa fa-angle-down' : 'fa fa-angle-right'}}" aria-hidden="true"></i> Filters
+									</a>
+									<div class="filter-display">
+										<span ng-show="options[$id].filters.$">"{{options[$id].filters.$}}" - </span><span ng-repeat="(key, item) in options[$id].filters"><span ng-repeat="i in item">{{i == '' ? 'NA' : i}}{{$last ? '' : ' / '}}</span>{{$last ? '' : ' / '}}</span>
+									</div>
+									<a class="filter-reset pull-right" ng-click="reset()">Reset</a>
+								</div>
+							</div>
+							<div id="timelineFacets" class="panel-body">
+								<form class="filter-bar">
+									<i class="filter-icon fa fa-filter" aria-hidden="true"></i>
+									<input type="text" class="filter-search" placeholder="Filter" ng-model="options[$id].filters.$" ng-model-options="{updateOn: 'default blur', debounce: {'default': 700, 'blur': 0}}">
+								</form>
+								<div class="row">
+									<facet class="col-md-4" label="'Type'" key="'type'"></facet>
+									<facet class="col-md-4" label="'Location'" key="'location'"></facet>
+									<facet class="col-md-4" label="'Service'" key="'service'"></facet>
+								</div>
+								<div class="row">
+									<facet class="col-md-4" label="'Program'" key="'program'"></facet>
+									<facet class="col-md-4" label="'Contact Type'" key="'contactType'"></facet>
+									<facet class="col-md-4" label="'Outcome'" key="'outcome'"></facet>
+								</div>
+							</div>
+						</div>
+					</header>
+					<div class="main-content">
+						<div class="container-fluid" ng-show="!(data.length > 0)">
+							<div class="panel panel-primary">
+								<div class="panel-body" style="text-align: center;">
+									<span class="text-danger">No Results</span>
+								</div>
+							</div>
+						</div>
+						<!--<div id="timeline" style="height: 700px"></div>-->
+						<timeline id="timeline" ng-show="data.length > 0" control="bind.timeline" config="bind.timeline._config" options="bind.timeline._options"></timeline>
+					</div>
+				</div>
+			</div>
+		</div>
+		<footer class="main-footer"></footer>
+	</body>
+</html>

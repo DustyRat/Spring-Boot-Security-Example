@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="layout" content="main"/>
+		<title>Permissions</title>
+		<script type="text/javascript" src="/js/main/SortControls.js"></script>
+		<script type="text/javascript" src="/js/main/controllers/PermissionController.js"></script>
+	</head>
+	<body layout:fragment="content">
+		<script>
+			$('#admin-menu').addClass("active");
+			$('#permission-link').addClass("active");
+		</script>
+		<div ng-controller="permissionListCtrl">
+			<div ng-controller="TabController as tabCtrl" ng-init="tabCtrl.setTab(1)">
+				<header class="main-heading">
+					<div class="masthead">
+						<div class="masthead-heading">
+							<div class="masthead-title">Permissions</div>
+						</div>
+						<div class="tab-container">
+							<ul class="tabs">
+								<li class="tab" ng-class="{active:tabCtrl.isSet(1)}" ng-click="tabCtrl.setTab(1)"><a>Core</a></li>
+								<li class="tab" ng-class="{active:tabCtrl.isSet(2)}" ng-click="tabCtrl.setTab(2)"><a>Silo</a></li>
+								<li class="tab" ng-class="{active:tabCtrl.isSet(3)}" ng-click="tabCtrl.setTab(3)"><a>Status</a></li>
+								<li class="tab" ng-class="{active:tabCtrl.isSet(4)}" ng-click="tabCtrl.setTab(4)" ng-show="notFound.length > 0"><a>Not Found</a></li>
+							</ul>
+						</div>
+					</div>
+				</header>
+				<div ng-controller="SortCtrl" ng-init="dataKey='permissions';defaultSort='name';itemsPerPage=20;" ng-show="tabCtrl.isSet(1)">
+					<header class="main-heading">
+						<div class="panel panel-filter">
+							<div class="panel-heading">
+								<div class="panel-title">
+									<a ng-collapse="#coreFacets:false">
+										<i class="{{display ? 'fa fa-angle-down' : 'fa fa-angle-right'}}" aria-hidden="true"></i> Filters
+									</a>
+									<div class="filter-display">
+										<span ng-show="options[$id].filters.$">"{{options[$id].filters.$}}" - </span><span ng-repeat="(key, item) in options[$id].filters"><span ng-repeat="i in item">{{i == '' ? 'NA' : i}}{{$last ? '' : ' / '}}</span>{{$last ? '' : ' / '}}</span>
+									</div>
+									<a class="filter-reset pull-right" ng-click="reset()">Reset</a>
+								</div>
+							</div>
+							<div id="coreFacets" class="panel-body">
+								<form class="filter-bar">
+									<i class="filter-icon fa fa-filter" aria-hidden="true"></i>
+									<input type="text" class="filter-search" placeholder="Filter" ng-model="options[$id].filters.$" ng-model-options="{updateOn: 'default blur', debounce: {'default': 700, 'blur': 0}}">
+								</form>
+								<div class="row">
+									<facet class="col-md-12" label="'Role'" key="'roleNames'"></facet>
+								</div>
+							</div>
+						</div>
+					</header>
+					<div class="main-content">
+						<div class="container-fluid p-t-50">
+							<div class="panel panel-primary">
+								<div class="panel-heading">
+									<div class="panel-title">Core</div>
+								</div>
+								<div class="panel-body" ng-hide="data.length > 0">
+									<span class="text-danger">No Results</span>
+								</div>
+								<div class="panel-table-body">
+									<table class="table table-body-striped table-body-hover" ng-show="data.length > 0">
+										<thead>
+											<tr>	
+												<th></th>
+												<th class="sortRow" style="width: 8%;" ng-click="changeSort('type')"><i class="{{sorted('type') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Type</th>
+												<th class="sortRow" style="width: 50%;" ng-click="changeSort('name')"><i class="{{sorted('name') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Name</th>
+												<th class="sortRow" ng-click="changeSort('permissionString')"><i class="{{sorted('permissionString') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Permission String</th>
+											</tr>
+										</thead>
+										<tbody ng-repeat="permission in data | orderBy:sortType:sortReverse | startFrom:(currentPage-1)*itemsPerPage | limitTo:itemsPerPage track by $index" ng-controller="ToggleCtrl as toggle">
+											<tr>
+												<td rowspan="2" class="expand" style="{{permission.roles.length > 0 ? '' : 'cursor: default;'}}" ng-click="permission.roles.length > 0  && toggle.setToggle()">
+													<i class="{{toggle.show ? 'fa fa-angle-down' : 'fa fa-angle-right'}}" aria-hidden="true" ng-if="permission.roles.length > 0"></i>
+												</td>
+												<td>{{permission.type}}</td>
+												<td>{{permission.name}}</td>
+												<td>{{permission.permissionString}}</td>
+											</tr>
+											<tr ng-show="toggle.show">
+												<th>Roles</th>
+												<td colspan="3">
+													<span class="avoidwrap" ng-repeat="role in permission.roles | orderBy: ['name'] track by $index">
+														<a class="show-link" ng-if="role.name != 'User Administration'" href="${createLink(uri: '/role/edit/')}{{role.id}}">{{role.name}}</a>
+														<span ng-if="role.name == 'User Administration'">{{role.name}}</span>{{$last ? '' : ',&nbsp'}}
+													</span>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								<div class="text-center">
+									<uib-pagination
+										ng-hide="hide"
+										class="pagination-sm"
+										boundary-links="true"
+										boundary-link-numbers="false"
+										direction-links="true"
+										force-ellipses="false"
+										items-per-page="itemsPerPage"
+										max-size="5"
+										ng-disabled="false"
+										ng-model="currentPage"
+										rotate="true"
+										total-items="totalItems"
+										first-text="&laquo;"
+										previous-text="&lsaquo;"
+										next-text="&rsaquo;"
+										last-text="&raquo;"></uib-pagination>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div ng-controller="SortCtrl" ng-init="dataKey='siloPermissions';defaultSort='name';itemsPerPage=20;" ng-show="tabCtrl.isSet(2)">
+					<header class="main-heading">
+						<div class="panel panel-filter">
+							<div class="panel-heading">
+								<div class="panel-title">
+									<a ng-collapse="#siloFacets:false">
+										<i class="{{display ? 'fa fa-angle-down' : 'fa fa-angle-right'}}" aria-hidden="true"></i> Filters
+									</a>
+									<div class="filter-display">
+										<span ng-show="options[$id].filters.$">"{{options[$id].filters.$}}" - </span><span ng-repeat="(key, item) in options[$id].filters"><span ng-repeat="i in item">{{i == '' ? 'NA' : i}}{{$last ? '' : ' / '}}</span>{{$last ? '' : ' / '}}</span>
+									</div>
+									<a class="filter-reset pull-right" ng-click="reset()">Reset</a>
+								</div>
+							</div>
+							<div id="siloFacets" class="panel-body">
+								<form class="filter-bar">
+									<i class="filter-icon fa fa-filter" aria-hidden="true"></i>
+									<input type="text" class="filter-search" placeholder="Filter" ng-model="options[$id].filters.$" ng-model-options="{updateOn: 'default blur', debounce: {'default': 700, 'blur': 0}}">
+								</form>
+								<div class="row">
+									<facet class="col-md-12" label="'Role'" key="'roleNames'"></facet>
+								</div>
+							</div>
+						</div>
+					</header>
+					<div class="main-content">
+						<div class="container-fluid p-t-50">
+							<div class="panel panel-primary">
+								<div class="panel-heading">
+									<div class="panel-title">Silo</div>
+								</div>
+								<div class="panel-body" ng-show="!(data.length > 0)">
+									<span class="text-danger">No Results</span>
+								</div>
+								<div class="panel-table-body">
+									<table class="table table-body-striped table-body-hover" ng-show="data.length > 0">
+										<thead>
+											<tr>	
+												<th></th>
+												<th style="width: 8%;">Type</th>
+												<th class="sortRow" style="width: 25%;" ng-click="changeSort('name')"><i class="{{sorted('name') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Name</th>
+												<th class="sortRow" ng-click="changeSort('permissionString')"><i class="{{sorted('permissionString') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Silo ID</th>
+											</tr>
+										</thead>
+										<tbody ng-repeat="permission in data | orderBy:sortType:sortReverse | startFrom:(currentPage-1)*itemsPerPage | limitTo:itemsPerPage track by $index" ng-controller="ToggleCtrl as toggle">
+											<tr>
+												<td rowspan="2" class="expand" style="{{permission.roles.length > 0 ? '' : 'cursor: default;'}}" ng-click="permission.roles.length > 0  && toggle.setToggle()">
+													<i class="{{toggle.show ? 'fa fa-angle-down' : 'fa fa-angle-right'}}" aria-hidden="true" ng-if="permission.roles.length > 0"></i>
+												</td>
+												<td>{{permission.type}}</td>
+												<td>{{permission.name}}</td>
+												<td>{{permission.permissionString}}</td>
+											</tr>
+											<tr ng-show="toggle.show">
+												<th>Roles</th>
+												<td colspan="3">
+													<span class="avoidwrap" ng-repeat="role in permission.roles | orderBy: ['name'] track by $index">
+														<a class="show-link" ng-if="role.name != 'User Administration'" href="${createLink(uri: '/role/edit/')}{{role.id}}">{{role.name}}</a>
+														<span ng-if="role.name == 'User Administration'">{{role.name}}</span>{{$last ? '' : ',&nbsp'}}
+													</span>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								<div class="text-center">
+									<uib-pagination
+										ng-hide="hide"
+										class="pagination-sm"
+										boundary-links="true"
+										boundary-link-numbers="false"
+										direction-links="true"
+										force-ellipses="false"
+										items-per-page="itemsPerPage"
+										max-size="5"
+										ng-disabled="false"
+										ng-model="currentPage"
+										rotate="true"
+										total-items="totalItems"
+										first-text="&laquo;"
+										previous-text="&lsaquo;"
+										next-text="&rsaquo;"
+										last-text="&raquo;"></uib-pagination>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div ng-controller="SortCtrl" ng-init="dataKey='statusPermissions';defaultSort='name';itemsPerPage=20;" ng-show="tabCtrl.isSet(3)">
+					<header class="main-heading">
+						<div class="panel panel-filter">
+							<div class="panel-heading">
+								<div class="panel-title">
+									<a ng-collapse="#statusFacets:false">
+										<i class="{{display ? 'fa fa-angle-down' : 'fa fa-angle-right'}}" aria-hidden="true"></i> Filters
+									</a>
+									<div class="filter-display">
+										<span ng-show="options[$id].filters.$">"{{options[$id].filters.$}}" - </span><span ng-repeat="(key, item) in options[$id].filters"><span ng-repeat="i in item">{{i == '' ? 'NA' : i}}{{$last ? '' : ' / '}}</span>{{$last ? '' : ' / '}}</span>
+									</div>
+									<a class="filter-reset pull-right" ng-click="reset()">Reset</a>
+								</div>
+							</div>
+							<div id="statusFacets" class="panel-body">
+								<form class="filter-bar">
+									<i class="filter-icon fa fa-filter" aria-hidden="true"></i>
+									<input type="text" class="filter-search" placeholder="Filter" ng-model="options[$id].filters.$" ng-model-options="{updateOn: 'default blur', debounce: {'default': 700, 'blur': 0}}">
+								</form>
+								<div class="row">
+									<facet class="col-md-12" label="'Role'" key="'roleNames'"></facet>
+								</div>
+							</div>
+						</div>
+					</header>
+					<div class="main-content">
+						<div class="container-fluid p-t-50">
+							<div class="panel panel-primary">
+								<div class="panel-heading">
+									<div class="panel-title">
+										Status <button type="button" class="btn pull-right" ng-click="addStatus()"><i class="fa fa-plus-circle" aria-hidden="true"></i> Add Status</button>
+									</div>
+								</div>
+								<div class="panel-body" ng-show="!(data.length > 0)">
+									<span class="text-danger">No Results</span>
+								</div>
+								<div class="panel-table-body">
+									<table class="table table-body-striped table-body-hover" ng-show="data.length > 0">
+										<thead>
+											<tr>
+												<th></th>
+												<th></th>
+												<th style="width: 8%;">Type</th>
+												<th class="sortRow" style="width: 50%;" ng-click="changeSort('name')"><i class="{{sorted('name') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Status Name</th>
+												<th>Default</th>
+												<th>Enabled</th>
+												<th></th>
+											</tr>
+										</thead>
+										<tbody ng-repeat="permission in data | orderBy:sortType:sortReverse | startFrom:(currentPage-1)*itemsPerPage | limitTo:itemsPerPage track by $index" ng-controller="ToggleCtrl as toggle">
+											<tr>
+												<td rowspan="2" class="expand" style="{{permission.roles.length > 0 ? '' : 'cursor: default;'}}" ng-click="permission.roles.length > 0  && toggle.setToggle()"><i class="{{toggle.show ? 'fa fa-angle-down' : 'fa fa-angle-right'}}" aria-hidden="true"></i></td>
+												<td class="action"><a ng-disabled="permission.count > 0" ng-click="permission.count > 0 || editStatus(permission)"><i class="fa fa-pencil" aria-hidden="true"></i> Edit</a></td>
+												<td>{{permission.type}}</td>
+												<td>{{permission.name}}</td>
+												<td style="width: 10px; text-align: center;"><a ng-click="toggleStatus(permission, 'isDefault', !permission.isDefault)" ng-disabled="permission.isDefault"><i class="{{permission.isDefault ? 'fa fa-toggle-on' : 'fa fa-toggle-off'}}" aria-hidden="true"></i></a></td>
+												<td style="width: 10px; text-align: center;"><a ng-click="toggleStatus(permission, 'isEnabled', !permission.isEnabled)"><i class="{{permission.isEnabled ? 'fa fa-toggle-on' : 'fa fa-toggle-off'}}" aria-hidden="true"></i></a></td>
+												<td class="action"><a class="text-danger uppercase pull-right" ng-disabled="permission.count > 0 || permission.isDefault" ng-click="permission.count > 0 || deletePermission(permission)"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete</a></td>
+											</tr>
+											<tr ng-show="toggle.show">
+												<th>Roles</th>
+												<td colspan="5">
+													<span class="avoidwrap" ng-repeat="role in permission.roles | orderBy: ['name'] track by $index">
+														<a class="show-link" ng-if="role.name != 'User Administration'" href="${createLink(uri: '/role/edit/')}{{role.id}}">{{role.name}}</a>
+														<span ng-if="role.name == 'User Administration'">{{role.name}}</span>{{$last ? '' : ',&nbsp'}}
+													</span>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								<div class="text-center">
+									<uib-pagination
+										ng-hide="hide"
+										class="pagination-sm"
+										boundary-links="true"
+										boundary-link-numbers="false"
+										direction-links="true"
+										force-ellipses="false"
+										items-per-page="itemsPerPage"
+										max-size="5"
+										ng-disabled="false"
+										ng-model="currentPage"
+										rotate="true"
+										total-items="totalItems"
+										first-text="&laquo;"
+										previous-text="&lsaquo;"
+										next-text="&rsaquo;"
+										last-text="&raquo;"></uib-pagination>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div ng-controller="SortCtrl" ng-init="dataKey='notFound';defaultSort='name';itemsPerPage=20;" ng-show="tabCtrl.isSet(4)">
+					<header class="main-heading">
+						<div class="panel panel-filter">
+							<div class="panel-heading">
+								<div class="panel-title">
+									<a ng-collapse="#notFoundFacets:false">
+										<i class="{{display ? 'fa fa-angle-down' : 'fa fa-angle-right'}}" aria-hidden="true"></i> Filters
+									</a>
+									<div class="filter-display">
+										<span ng-show="options[$id].filters.$">"{{options[$id].filters.$}}" - </span><span ng-repeat="(key, item) in options[$id].filters"><span ng-repeat="i in item">{{i == '' ? 'NA' : i}}{{$last ? '' : ' / '}}</span>{{$last ? '' : ' / '}}</span>
+									</div>
+									<a class="filter-reset pull-right" ng-click="reset()">Reset</a>
+								</div>
+							</div>
+							<div id="notFoundFacets" class="panel-body">
+								<form class="filter-bar">
+									<i class="filter-icon fa fa-filter" aria-hidden="true"></i>
+									<input type="text" class="filter-search" placeholder="Filter" ng-model="options[$id].filters.$" ng-model-options="{updateOn: 'default blur', debounce: {'default': 700, 'blur': 0}}">
+								</form>
+								<div class="row">
+									<facet class="col-md-12" label="'Role'" key="'roleNames'"></facet>
+								</div>
+							</div>
+						</div>
+					</header>
+					<div class="main-content">
+						<div class="container-fluid p-t-50">
+							<div class="panel panel-primary">
+								<div class="panel-heading">
+									<div class="panel-title">Not Found</div>
+								</div>
+								<div class="panel-body" ng-show="!(data.length > 0)">
+									<span class="text-danger">No Results</span>
+								</div>
+								<div class="panel-table-body">
+									<table class="table table-body-striped table-body-hover" ng-show="data.length > 0">
+										<thead>
+											<tr>
+												<th></th>
+												<th></th>
+												<th class="sortRow" style="width: 8%;" ng-click="changeSort('type')"><i class="{{sorted('type') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Type</th>
+												<th class="sortRow" style="width: 50%;" ng-click="changeSort('name')"><i class="{{sorted('name') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Name</th>
+												<th class="sortRow" ng-click="changeSort('permissionString')"><i class="{{sorted('permissionString') ? sortReverse ? 'fa fa-angle-up' : 'fa fa-angle-down' : '' }}" aria-hidden="true"></i>Permission String</th>
+												<th></th>
+											</tr>
+										</thead>
+										<tbody ng-repeat="permission in data | orderBy:sortType:sortReverse | startFrom:(currentPage-1)*itemsPerPage | limitTo:itemsPerPage track by $index" ng-controller="ToggleCtrl as toggle">
+											<tr>
+												<td rowspan="2" class="expand" style="{{permission.roles.length > 0 ? '' : 'cursor: default;'}}" ng-click="permission.roles.length > 0  && toggle.setToggle()">
+													<i class="{{toggle.show ? 'fa fa-angle-down' : 'fa fa-angle-right'}}" aria-hidden="true" ng-if="permission.roles.length > 0"></i>
+												</td>
+												<td class="action"><a ng-click="mergePermission(permission)"><i class="fa fa-compress" aria-hidden="true"></i> Merge</a></td>
+												<td>{{permission.type}}</td>
+												<td>{{permission.name}}</td>
+												<td>{{permission.permissionString}}</td>
+												<td class="action"><a class="text-danger uppercase pull-right" ng-click="deletePermission(permission)"><i class="fa fa-trash-o" aria-hidden="true"></i> Delete</a></td>
+											</tr>
+											<tr ng-show="toggle.show">
+												<th>Roles</th>
+												<td colspan="3">
+													<span class="avoidwrap" ng-repeat="role in permission.roles | orderBy: ['name'] track by $index">
+														<a class="show-link" ng-if="role.name != 'User Administration'" href="${createLink(uri: '/role/edit/')}{{role.id}}">{{role.name}}</a>
+														<span ng-if="role.name == 'User Administration'">{{role.name}}</span>{{$last ? '' : ',&nbsp'}}
+													</span>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								<div class="text-center">
+									<uib-pagination
+										ng-hide="hide"
+										class="pagination-sm"
+										boundary-links="true"
+										boundary-link-numbers="false"
+										direction-links="true"
+										force-ellipses="false"
+										items-per-page="itemsPerPage"
+										max-size="5"
+										ng-disabled="false"
+										ng-model="currentPage"
+										rotate="true"
+										total-items="totalItems"
+										first-text="&laquo;"
+										previous-text="&lsaquo;"
+										next-text="&rsaquo;"
+										last-text="&raquo;"></uib-pagination>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
